@@ -32,6 +32,7 @@
             <nav class="flex flex-wrap justify-center gap-2 md:gap-4">
                 <button onclick="switchTab('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home & Pricing</button>
                 <button onclick="switchTab('book')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book a Session</button>
+                <button onclick="switchTab('agenda')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-agenda"><i class="fa-solid fa-calendar-days mr-1"></i> My Schedule</button>
                 <button onclick="switchTab('camps')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-camps">Camps & Info</button>
                 <button onclick="switchTab('admin')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-admin"><i class="fa-solid fa-lock mr-1"></i> Admin</button>
             </nav>
@@ -43,7 +44,6 @@
 
         <!-- TAB 1: HOME & PRICING -->
         <section id="tab-home" class="space-y-8">
-            <!-- Hero Banner -->
             <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
                 <div class="max-w-2xl space-y-4">
                     <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
@@ -141,7 +141,18 @@
             </div>
         </section>
 
-        <!-- TAB 3: CAMPS & INFO -->
+        <!-- TAB 3: MY SCHEDULE (AGENDA VIEW) -->
+        <section id="tab-agenda" class="hidden space-y-6 max-w-4xl mx-auto">
+            <div class="space-y-1">
+                <h3 class="text-2xl font-bold text-white">Weekly Training Schedule & Agenda</h3>
+                <p class="text-sm text-slate-400">View all booked training sessions and confirmed player lineups in one consolidated timeline.</p>
+            </div>
+            <div id="agenda-container" class="space-y-4">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 4: CAMPS & INFO -->
         <section id="tab-camps" class="hidden space-y-6">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-8 text-center space-y-4 max-w-2xl mx-auto shadow-xl">
                 <div class="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
@@ -158,7 +169,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: ADMIN PANEL -->
+        <!-- TAB 5: ADMIN PANEL -->
         <section id="tab-admin" class="hidden space-y-6 max-w-3xl mx-auto">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -241,7 +252,7 @@
         <p>&copy; 2026 TX Pierce Baseball Training (Sequential Baseball Training). All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript Application Logic with JSONbin Real-Time Sync -->
+    <!-- JavaScript Application Logic with JSONbin Real-Time Sync & Agenda View -->
     <script>
         const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
         const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
@@ -261,7 +272,6 @@
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
 
-        // Fetch live slots from JSONbin
         async function fetchSlots() {
             try {
                 const response = await fetch(`${BIN_URL}/latest`, {
@@ -279,15 +289,16 @@
             const spinner = document.getElementById('loading-spinner');
             if (spinner) spinner.classList.add('hidden');
             renderSlots();
+            renderAgenda();
             if (!document.getElementById('tab-admin').classList.contains('hidden')) {
                 renderAdminBookings();
             }
         }
 
-        // Save slots to JSONbin & local backup
         async function saveSlots() {
             localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
             renderSlots();
+            renderAgenda();
 
             try {
                 await fetch(BIN_URL, {
@@ -315,7 +326,7 @@
             activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
             activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
 
-            if (tabId === 'book' || tabId === 'admin') {
+            if (tabId === 'book' || tabId === 'admin' || tabId === 'agenda') {
                 fetchSlots();
             }
         }
@@ -373,6 +384,47 @@
                         </div>
                         <h4 class="font-bold text-white text-base">${slot.type}</h4>
                         ${playerSlotsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Agenda / My Schedule View Renderer
+        function renderAgenda() {
+            const container = document.getElementById('agenda-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (slots.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">No scheduled training sessions found.</p>';
+                return;
+            }
+
+            slots.forEach(slot => {
+                const filledPlayers = slot.players.filter(p => p !== "");
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3";
+
+                let rosterList = filledPlayers.length > 0 
+                    ? filledPlayers.map((p, idx) => `<span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded text-xs text-slate-200"><i class="fa-solid fa-user text-blue-500 mr-1.5"></i> ${p}</span>`).join(' ')
+                    : '<span class="text-xs text-slate-500 italic">No players booked yet (Open slots available)</span>';
+
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-800 pb-3">
+                        <div>
+                            <span class="text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">${slot.type}</span>
+                            <h4 class="text-base font-bold text-white mt-1"><i class="fa-regular fa-calendar text-slate-400 mr-2"></i> ${slot.datetime}</h4>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded ${filledPlayers.length === slot.slotsNeeded ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
+                            ${filledPlayers.length}/${slot.slotsNeeded} Slots Filled
+                        </span>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Booked Roster:</p>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            ${rosterList}
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
