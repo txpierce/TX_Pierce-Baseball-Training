@@ -338,6 +338,7 @@
     <script>
         const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
         const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
+        const ADMIN_PASSWORD = "coach123"; // <-- Change your password here if desired!
 
         let slots = [];
         let camps = [];
@@ -475,6 +476,15 @@
         }
 
         function switchTab(tabId) {
+            // Check password if trying to access admin tab
+            if (tabId === 'admin') {
+                const enteredPass = prompt("Enter Admin Password:");
+                if (enteredPass !== ADMIN_PASSWORD) {
+                    alert("Incorrect password! Access denied.");
+                    return;
+                }
+            }
+
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
 
