@@ -29,14 +29,13 @@
                     <p class="text-xs text-slate-400">Coach Matt Pierce | Houston, TX</p>
                 </div>
             </div>
-            <nav class="flex flex-wrap justify-center items-center gap-1.5 md:gap-2">
+            <nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3">
                 <button onclick="switchTab('home')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home</button>
                 <button onclick="switchTab('book')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book</button>
                 <button onclick="switchTab('camps')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-camps"><i class="fa-solid fa-campground mr-1"></i> Camps</button>
                 <button onclick="switchTab('calendar')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-calendar"><i class="fa-solid fa-calendar-alt mr-1"></i> Calendar</button>
                 <button onclick="switchTab('agenda')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-agenda"><i class="fa-solid fa-calendar-days mr-1"></i> Schedule</button>
                 <button onclick="switchTab('admin')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-admin"><i class="fa-solid fa-lock mr-1"></i> Admin</button>
-                <button onclick="downloadICalFeed()" title="Download ICS Calendar for Google Calendar" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-xs md:text-sm font-medium transition shadow flex items-center gap-1"><i class="fa-solid fa-file-arrow-down"></i> Sync</button>
             </nav>
         </div>
     </header>
@@ -529,62 +528,6 @@
             renderSlots();
         }
 
-        // Generate and download ICS Calendar File for Google Calendar / Apple Calendar
-        function downloadICalFeed() {
-            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TX Pierce Baseball Training//Schedule//EN\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
-            
-            slots.forEach(slot => {
-                const dt = new Date(slot.datetime.replace(' |', ','));
-                if (!isNaN(dt.getTime())) {
-                    const year = dt.getUTCFullYear();
-                    const month = String(dt.getUTCMonth() + 1).padStart(2, '0');
-                    const day = String(dt.getUTCDate()).padStart(2, '0');
-                    const hour = String(dt.getUTCHours()).padStart(2, '0');
-                    const min = String(dt.getUTCMinutes()).padStart(2, '0');
-                    const timeStamp = `${year}${month}${day}T${hour}${min}00Z`;
-
-                    icsContent += "BEGIN:VEVENT\n";
-                    icsContent += `UID:slot-${slot.id}@txpiercebaseball.com\n`;
-                    icsContent += `DTSTAMP:${timeStamp}\n`;
-                    icsContent += `DTSTART:${timeStamp}\n`;
-                    icsContent += `SUMMARY:${slot.type}\n`;
-                    icsContent += `DESCRIPTION:Booked Roster: ${slot.players.filter(p => p !== "").join(', ') || 'Open Slots'}\n`;
-                    icsContent += "END:VEVENT\n";
-                }
-            });
-
-            camps.forEach(camp => {
-                const campDateStr = camp.datetime || camp.date;
-                const dt = new Date(campDateStr.replace(' |', ','));
-                if (!isNaN(dt.getTime())) {
-                    const year = dt.getUTCFullYear();
-                    const month = String(dt.getUTCMonth() + 1).padStart(2, '0');
-                    const day = String(dt.getUTCDate()).padStart(2, '0');
-                    const hour = String(dt.getUTCHours()).padStart(2, '0');
-                    const min = String(dt.getUTCMinutes()).padStart(2, '0');
-                    const timeStamp = `${year}${month}${day}T${hour}${min}00Z`;
-
-                    icsContent += "BEGIN:VEVENT\n";
-                    icsContent += `UID:camp-${camp.id}@txpiercebaseball.com\n`;
-                    icsContent += `DTSTAMP:${timeStamp}\n`;
-                    icsContent += `DTSTART:${timeStamp}\n`;
-                    icsContent += `SUMMARY:Camp: ${camp.title}\n`;
-                    icsContent += `DESCRIPTION:${camp.desc} - Flyer: ${camp.flyer}\n`;
-                    icsContent += "END:VEVENT\n";
-                }
-            });
-
-            icsContent += "END:VCALENDAR";
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'tx_pierce_training_schedule.ics');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         function renderSlots() {
             const container = document.getElementById('slots-container');
             if (!container) return;
@@ -868,10 +811,18 @@
                         } else {
                             const filledPlayers = slot.players.filter(p => p !== "").join(', ') || 'Open Slots';
                             const isFull = slot.players.every(p => p !== "");
-                            eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 ${isFull ? 'bg-rose-950/40 border-rose-900/60 text-rose-200' : 'bg-blue-950/40 border-blue-900/60 text-blue-200'}`;
+                            const firstOpenIdx = slot.players.findIndex(p => p === "");
+                            const targetIdx = firstOpenIdx !== -1 ? firstOpenIdx : 0;
+
+                            // Make clickable and dynamically color based on fulfillment
+                            eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 cursor-pointer transition hover:scale-[1.02] ${isFull ? 'bg-rose-950/50 border-rose-900/60 text-rose-200 hover:border-rose-700' : 'bg-blue-950/50 border-blue-900/60 text-blue-200 hover:border-blue-500'}`;
+                            eventCard.setAttribute('onclick', `openBookingModal(${slot.id}, ${targetIdx})`);
+                            eventCard.title = isFull ? "Session Full (Click to review/manage)" : "Click to Book this Session";
+
                             eventCard.innerHTML = `
                                 <div class="font-bold flex items-center justify-between text-white">
                                     <span><i class="fa-regular fa-clock text-slate-400 mr-1 text-[10px]"></i>${timeStr}</span>
+                                    <span class="text-[9px] ${isFull ? 'text-rose-400' : 'text-emerald-400'}">${isFull ? 'Full' : 'Open'}</span>
                                 </div>
                                 <div class="text-[10px] text-slate-300 font-semibold truncate">${shortType}</div>
                                 <div class="text-[10px] text-amber-400 truncate"><i class="fa-solid fa-user mr-1 text-[9px]"></i>${filledPlayers}</div>
