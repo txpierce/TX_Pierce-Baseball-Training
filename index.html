@@ -41,10 +41,10 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
 
         <!-- TAB 1: HOME & PRICING -->
-        <section id="tab-home" class="space-y-8 max-w-none">
+        <section id="tab-home" class="space-y-8 max-w-4xl mx-auto">
             <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
                 <div class="max-w-2xl space-y-4">
                     <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
@@ -117,7 +117,7 @@
         </section>
 
         <!-- TAB 2: BOOK A SESSION -->
-        <section id="tab-book" class="hidden space-y-6">
+        <section id="tab-book" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h3 class="text-2xl font-bold text-white">Available Training Slots</h3>
@@ -142,7 +142,7 @@
         </section>
 
         <!-- TAB 3: MY SCHEDULE (AGENDA VIEW) -->
-        <section id="tab-agenda" class="hidden space-y-6">
+        <section id="tab-agenda" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="space-y-1">
                 <h3 class="text-2xl font-bold text-white">Weekly Training Schedule & Agenda</h3>
                 <p class="text-sm text-slate-400">View all booked training sessions and confirmed player lineups in one consolidated timeline.</p>
@@ -155,22 +155,22 @@
         <!-- TAB 4: CALENDAR VIEW -->
         <section id="tab-calendar" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
-                <button onclick="changeMonth(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded text-sm transition"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
-                <h3 id="calendar-month-year" class="text-lg font-bold text-white">November 2026</h3>
-                <button onclick="changeMonth(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded text-sm transition">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                <button onclick="changeMonth(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-2 rounded text-sm transition font-medium"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
+                <h3 id="calendar-month-year" class="text-xl font-bold text-white">November 2026</h3>
+                <button onclick="changeMonth(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-2 rounded text-sm transition font-medium">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
             </div>
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-xl">
-                <div class="grid grid-cols-7 gap-2 text-center font-semibold text-xs text-slate-400 pb-2 border-b border-slate-800">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-xl overflow-x-auto">
+                <div class="grid grid-cols-7 gap-3 text-center font-bold text-xs text-slate-400 pb-3 border-b border-slate-800 min-w-[700px]">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
-                <div id="calendar-grid" class="grid grid-cols-7 gap-2 pt-2">
+                <div id="calendar-grid" class="grid grid-cols-7 gap-3 pt-3 min-w-[700px]">
                     <!-- Populated dynamically via JS -->
                 </div>
             </div>
         </section>
 
         <!-- TAB 5: CAMPS & INFO -->
-        <section id="tab-camps" class="hidden space-y-6">
+        <section id="tab-camps" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-8 text-center space-y-4 max-w-2xl mx-auto shadow-xl">
                 <div class="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
                     <i class="fa-solid fa-campground"></i>
@@ -187,7 +187,7 @@
         </section>
 
         <!-- TAB 6: ADMIN PANEL -->
-        <section id="tab-admin" class="hidden space-y-6">
+        <section id="tab-admin" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                     <div>
@@ -549,22 +549,22 @@
             // Blank spaces for previous month offset
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = "h-24 bg-slate-900/30 rounded-lg border border-slate-800/40 opacity-30";
+                emptyCell.className = "min-h-[110px] bg-slate-900/30 rounded-xl border border-slate-800/40 opacity-30";
                 grid.appendChild(emptyCell);
             }
 
             // Days of current month
             for (let day = 1; day <= totalDays; day++) {
                 const cell = document.createElement('div');
-                cell.className = "h-24 bg-slate-900 border border-slate-800 rounded-lg p-1.5 overflow-y-auto flex flex-col justify-between";
+                cell.className = "min-h-[125px] bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex flex-col justify-between shadow";
 
                 const dateHeader = document.createElement('div');
-                dateHeader.className = "text-xs font-bold text-slate-400";
-                dateHeader.innerText = day;
+                dateHeader.className = "text-xs font-bold text-slate-300 pb-1 border-b border-slate-800 mb-1.5 flex justify-between items-center";
+                dateHeader.innerHTML = `<span>${day}</span>`;
                 cell.appendChild(dateHeader);
 
                 const eventsContainer = document.createElement('div');
-                eventsContainer.className = "space-y-1 mt-1 flex-grow";
+                eventsContainer.className = "space-y-1.5 flex-grow overflow-y-auto";
 
                 slots.forEach(slot => {
                     const slotDate = new Date(slot.datetime.replace(' |', ','));
@@ -573,12 +573,23 @@
                         slotDate.getMonth() === month &&
                         slotDate.getDate() === day
                     ) {
-                        const badge = document.createElement('div');
+                        const timeStr = slot.datetime.split('|')[1]?.trim() || '';
+                        const shortType = slot.type.split('(')[0].trim();
+                        const filledPlayers = slot.players.filter(p => p !== "").join(', ') || 'Open Slots';
+
+                        const eventCard = document.createElement('div');
                         const isFull = slot.players.every(p => p !== "");
-                        badge.className = `text-[10px] px-1.5 py-0.5 rounded truncate font-medium ${isFull ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`;
-                        badge.innerText = `${slot.datetime.split('|')[1]?.trim() || ''} - ${slot.type.split('(')[0]}`;
-                        badge.title = `${slot.type} (${slot.datetime})`;
-                        eventsContainer.appendChild(badge);
+                        
+                        eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 ${isFull ? 'bg-rose-950/40 border-rose-900/60 text-rose-200' : 'bg-blue-950/40 border-blue-900/60 text-blue-200'}`;
+                        
+                        eventCard.innerHTML = `
+                            <div class="font-bold flex items-center justify-between text-white">
+                                <span><i class="fa-regular fa-clock text-slate-400 mr-1 text-[10px]"></i>${timeStr}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-300 font-semibold truncate">${shortType}</div>
+                            <div class="text-[10px] text-amber-400 truncate"><i class="fa-solid fa-user mr-1 text-[9px]"></i>${filledPlayers}</div>
+                        `;
+                        eventsContainer.appendChild(eventCard);
                     }
                 });
 
