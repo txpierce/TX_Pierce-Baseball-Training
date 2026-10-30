@@ -240,7 +240,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Parent Phone Number</label>
-                    <input type="tel" id="parent-phone" placeholder="e.g. 832-555-1234" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                    <input type="tel" id="parent-phone" placeholder="e.g. 832-555-1234" oninput="formatPhoneNumberInput(this)" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
 
                 <p class="text-xs text-slate-400">Payment requests will be coordinated manually by Coach Matt Pierce.</p>
@@ -278,6 +278,18 @@
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""], phones: [""] }
         ];
 
+        // Format phone number live as xxx-xxx-xxxx
+        function formatPhoneNumberInput(input) {
+            let cleaned = input.value.replace(/\D/g, '').substring(0, 10);
+            let match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+            if (match) {
+                let formatted = match[1];
+                if (match[2]) formatted += '-' + match[2];
+                if (match[3]) formatted += '-' + match[3];
+                input.value = formatted;
+            }
+        }
+
         function formatDateTimeString(dateTimeStr) {
             if (!dateTimeStr || !dateTimeStr.includes('T')) return dateTimeStr;
             const dt = new Date(dateTimeStr);
@@ -310,7 +322,6 @@
                     const data = await response.json();
                     if (data.record && data.record.slots) {
                         slots = data.record.slots;
-                        // Ensure legacy slots have phones array initialized
                         slots.forEach(s => {
                             if (!s.phones) s.phones = new Array(s.slotsNeeded).fill("");
                         });
@@ -438,6 +449,7 @@
             });
         }
 
+        // Agenda / My Schedule View Renderer with Arrival Notes & Formatted Phones
         function renderAgenda() {
             const container = document.getElementById('agenda-container');
             if (!container) return;
@@ -449,7 +461,6 @@
             }
 
             slots.forEach(slot => {
-                // Collect all booked players with their respective phones and labels
                 let bookedItems = [];
                 slot.players.forEach((p, idx) => {
                     if (p !== "") {
@@ -459,8 +470,8 @@
                             if (idx === 2 || idx === 3) arrivalNote = `P${idx+1} (Arrive +1 Hr)`;
                         }
                         const phoneStr = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 text-[11px]">(${slot.phones[idx]})</span>` : '';
-                        bookedItems.innerHTML = ''; // safe init
-                        bookedItems.push(`<span class="bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded text-xs text-slate-200 flex items-center gap-1.5"><i class="fa-solid fa-user text-blue-500"></i> <strong class="text-white">${p}</strong>${phoneStr} <span class="text-[10px] text-slate-400">(${arrivalNote})</span></span>`);
+                        
+                        bookedItems.push(`<span class="bg-slate-900 border border-slate-800 px-3 py-2 rounded text-xs text-slate-200 flex items-center gap-2"><i class="fa-solid fa-user text-blue-500"></i> <strong class="text-white">${p}</strong>${phoneStr} <span class="text-[10px] text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">(${arrivalNote})</span></span>`);
                     }
                 });
 
@@ -542,7 +553,7 @@
                 
                 if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0 && player2 && slot.players.length > 1) {
                     slot.players[1] = player2;
-                    slot.phones[1] = phone; // share phone for 2-on-1 first booker or leave blank if separate (assigning same parent phone)
+                    slot.phones[1] = phone;
                 }
 
                 closeModal();
