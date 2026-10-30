@@ -193,7 +193,6 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
-                            <!-- Calendar and time picker -->
                             <input type="datetime-local" id="admin-datetime" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 [color-scheme:dark]">
                         </div>
                     </div>
@@ -264,7 +263,7 @@
             { 
                 id: 3, 
                 type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
-                datetime: "Wed, Nov 4, 2026 | 3:30 PM", 
+                datetime: "Wed, Dec 2, 2026 | 3:30 PM", 
                 slotsNeeded: 4, 
                 players: ["", "", "", ""],
                 isYouthDuoGroup: true
@@ -272,7 +271,6 @@
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
 
-        // Format datetime-local input cleanly
         function formatDateTimeString(dateTimeStr) {
             if (!dateTimeStr || !dateTimeStr.includes('T')) return dateTimeStr;
             const dt = new Date(dateTimeStr);
@@ -358,13 +356,22 @@
                 
                 card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
                 
-                let playerSlotsHtml = '<div class="space-y-2 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
+                let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
                 
+                if (slot.isYouthDuoGroup) {
+                    // Group 1 Header
+                    playerSlotsHtml += `<div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 1: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
+                }
+
                 slot.players.forEach((player, idx) => {
+                    if (slot.isYouthDuoGroup && idx === 2) {
+                        // Group 2 Header injected right before Player 3
+                        playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 2: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
+                    }
+
                     let posName = `Player ${idx + 1}`;
                     if (slot.isYouthDuoGroup) {
-                        if (idx === 0 || idx === 1) posName = `Player ${idx + 1} (Arrive at Start: 1hr Hitting + 30m Defense)`;
-                        if (idx === 2 || idx === 3) posName = `Player ${idx + 1} (Arrive +1 Hr: 30m Defense + 1hr Hitting)`;
+                        posName = `Player ${idx + 1}`;
                     } else if (slot.slotsNeeded === 2) {
                         posName = `Hitter ${idx + 1}`;
                     }
@@ -383,7 +390,7 @@
                 });
 
                 if (slot.isYouthDuoGroup) {
-                    playerSlotsHtml += `<div class="mt-2 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center">
+                    playerSlotsHtml += `<div class="mt-3 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center">
                         <i class="fa-solid fa-circle-info mr-1"></i> All 4 Players: 30 Mins Combined Defense Together
                     </div>`;
                 }
