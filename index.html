@@ -244,7 +244,7 @@
     <!-- JavaScript Application Logic with JSONbin Real-Time Sync -->
     <script>
         const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
-        const MASTER_KEY = ""; // Leave blank for public bins or enter your JSONbin master key if needed
+        const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
 
         let slots = [];
         const defaultSlots = [
@@ -264,8 +264,9 @@
         // Fetch live slots from JSONbin
         async function fetchSlots() {
             try {
-                const headers = MASTER_KEY ? { 'X-Master-Key': MASTER_KEY } : {};
-                const response = await fetch(`${BIN_URL}/latest`, { headers });
+                const response = await fetch(`${BIN_URL}/latest`, {
+                    headers: { 'X-Master-Key': MASTER_KEY }
+                });
                 if (response.ok) {
                     const data = await response.json();
                     slots = data.record.slots || defaultSlots;
@@ -289,12 +290,12 @@
             renderSlots();
 
             try {
-                const headers = { 'Content-Type': 'application/json' };
-                if (MASTER_KEY) headers['X-Master-Key'] = MASTER_KEY;
-
                 await fetch(BIN_URL, {
                     method: 'PUT',
-                    headers: headers,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': MASTER_KEY
+                    },
                     body: JSON.stringify({ slots: slots })
                 });
             } catch (err) {
