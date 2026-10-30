@@ -134,8 +134,8 @@
                 <p class="text-sm">Fetching live schedule status...</p>
             </div>
 
-            <!-- Available Slots Grid -->
-            <div id="slots-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Available Slots Grid - Flex Container with Sequential Ordering -->
+            <div id="slots-container" class="flex flex-wrap gap-4">
                 <!-- Dynamically populated via JavaScript -->
             </div>
         </section>
@@ -251,7 +251,7 @@
         <p>&copy; 2026 TX Pierce Baseball Training (Sequential Baseball Training). All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript Application Logic with Real-Time Polling Sync -->
+    <!-- JavaScript Application Logic -->
     <script>
         const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
         const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
@@ -286,6 +286,15 @@
             }).replace(',', ' |');
         }
 
+        // Helper to sort slots chronologically by actual date and time
+        function sortSlotsChronologically() {
+            slots.sort((a, b) => {
+                const dateA = new Date(a.datetime.replace(' |', ','));
+                const dateB = new Date(b.datetime.replace(' |', ','));
+                return dateA - dateB;
+            });
+        }
+
         async function fetchSlots(silent = false) {
             try {
                 const response = await fetch(`${BIN_URL}/latest`, {
@@ -298,11 +307,13 @@
                     }
                 }
             } catch (e) {
-                console.log('Using local fallback due to network issue.');
+                console.log('Using local fallback.');
                 if (slots.length === 0) {
                     slots = JSON.parse(localStorage.getItem('tx_pierce_slots_backup')) || defaultSlots;
                 }
             }
+
+            sortSlotsChronologically();
 
             if (!silent) {
                 const spinner = document.getElementById('loading-spinner');
@@ -316,6 +327,7 @@
         }
 
         async function saveSlots() {
+            sortSlotsChronologically();
             localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
             renderSlots();
             renderAgenda();
@@ -360,7 +372,8 @@
                 const card = document.createElement('div');
                 const isFullyBooked = slot.players.every(p => p !== "");
                 
-                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
+                // Responsive card width style for strict left-to-right sequential flow
+                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-xl w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
                 
                 let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
                 
@@ -605,11 +618,10 @@
             renderAdminBookings();
         }
 
-        // Fetch live schedule data on page load and poll every 4 seconds in the background
         window.onload = function() {
             fetchSlots();
             setInterval(() => {
-                fetchSlots(true); // Silent background refresh to sync across devices automatically
+                fetchSlots(true);
             }, 4000);
         };
     </script>
