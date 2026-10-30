@@ -7,6 +7,14 @@
     <!-- Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Initialize EmailJS with your Public Key if needed, or pass it directly in send()
+            emailjs.init("YOUR_PUBLIC_KEY");
+        })();
+    </script>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
 
@@ -231,7 +239,7 @@
     <!-- JavaScript Application Logic -->
     <script>
         // Initial Default Slots
-        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v5')) || [
+        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v7')) || [
             { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""] },
             { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""] },
             { 
@@ -246,7 +254,7 @@
         ];
 
         function saveSlots() {
-            localStorage.setItem('tx_pierce_slots_v5', JSON.stringify(slots));
+            localStorage.setItem('tx_pierce_slots_v7', JSON.stringify(slots));
         }
 
         function switchTab(tabId) {
@@ -371,7 +379,24 @@
                 saveSlots();
                 closeModal();
                 renderSlots();
-                alert(`Successfully booked for player(s)! Coach Matt Pierce has been notified.`);
+
+                // --- EMAILJS NOTIFICATION TRIGGER ---
+                const templateParams = {
+                    session_type: slot.type,
+                    session_datetime: slot.datetime,
+                    player_name: player1 + (player2 ? ` & ${player2}` : ''),
+                    parent_venmo: venmo
+                };
+
+                // Using your EmailJS Service ID and Template ID template_l7bpk0i
+                emailjs.send('service_uwpsp0v', 'template_l7bpk0i', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        alert(`Successfully booked for player(s)! Email notification sent to Coach Matt Pierce.`);
+                    }, function(error) {
+                        console.log('FAILED...', error);
+                        alert(`Successfully booked for player(s), but email notification failed. Error: ${JSON.stringify(error)}`);
+                    });
             }
         }
 
