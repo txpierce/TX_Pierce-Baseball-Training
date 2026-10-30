@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- Dynamic Announcement Banner (Placed below Hero Card) -->
+            <!-- Dynamic Announcement Banner -->
             <div id="announcement-banner-container"></div>
 
             <!-- Today's Booked Lessons Section -->
@@ -349,14 +349,25 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1" id="label-hitter-1">Player's Last Name</label>
-                    <input type="text" id="player-lastname" placeholder="e.g. Smith" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1" id="label-hitter-1">Player's Last Name</label>
+                        <input type="text" id="player-lastname" placeholder="e.g. Smith" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1" id="label-player-age">Player Age</label>
+                        <input type="number" id="player-age" placeholder="e.g. 12" min="5" max="22" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
                 </div>
 
                 <div id="hitter-2-container" class="hidden">
                     <label class="block text-xs font-medium text-slate-400 mb-1">Second Hitter's Last Name</label>
                     <input type="text" id="player-lastname-2" placeholder="e.g. Jones" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Parent Email Address</label>
+                    <input type="email" id="parent-email" placeholder="e.g. parent@gmail.com" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
 
                 <div>
@@ -396,18 +407,20 @@
         let currentCalendarDate = new Date(2026, 9, 30); // Default to Oct 30, 2026
 
         const defaultSlots = [
-            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 4:00 PM", slotsNeeded: 1, players: ["Smith"], phones: ["832-555-1234"] },
-            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 5:00 PM", slotsNeeded: 2, players: ["Johnson", "Davis"], phones: ["832-555-5678", "832-555-9012"] },
+            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 4:00 PM", slotsNeeded: 1, players: ["Smith"], ages: ["12"], phones: ["832-555-1234"], emails: ["smith@gmail.com"] },
+            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 5:00 PM", slotsNeeded: 2, players: ["Johnson", "Davis"], ages: ["13", "14"], phones: ["832-555-5678", "832-555-9012"], emails: ["j@gmail.com", "d@gmail.com"] },
             { 
                 id: 3, 
                 type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
                 datetime: "Fri, Oct 30, 2026 | 3:30 PM", 
                 slotsNeeded: 4, 
                 players: ["Miller", "Garcia", "", ""],
+                ages: ["11", "12", "", ""],
                 phones: ["832-555-1111", "832-555-2222", "", ""],
+                emails: ["m@gmail.com", "g@gmail.com", "", ""],
                 isYouthDuoGroup: true
             },
-            { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""], phones: [""] }
+            { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""], ages: [""], phones: [""], emails: [""] }
         ];
 
         const defaultCamps = [
@@ -469,6 +482,8 @@
                         slots = data.record.slots;
                         slots.forEach(s => {
                             if (!s.phones) s.phones = new Array(s.slotsNeeded).fill("");
+                            if (!s.ages) s.ages = new Array(s.slotsNeeded).fill("");
+                            if (!s.emails) s.emails = new Array(s.slotsNeeded).fill("");
                         });
                     }
                     if (data.record && data.record.camps) {
@@ -632,7 +647,8 @@
                         <div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 1: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
                     
                     for (let i = 0; i < 2; i++) {
-                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong> <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        let ageStr = slot.ages && slot.ages[i] ? ` (Age ${slot.ages[i]})` : '';
+                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong>${ageStr} <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
                             <span><strong class="text-slate-300">Player ${i+1}:</strong> ${pName}</span>
                             ${slot.players[i] ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${i})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
@@ -642,7 +658,8 @@
                     playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 2: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
 
                     for (let i = 2; i < 4; i++) {
-                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong> <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        let ageStr = slot.ages && slot.ages[i] ? ` (Age ${slot.ages[i]})` : '';
+                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong>${ageStr} <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
                             <span><strong class="text-slate-300">Player ${i+1}:</strong> ${pName}</span>
                             ${slot.players[i] ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${i})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
@@ -653,7 +670,8 @@
                 } else {
                     slot.players.forEach((player, idx) => {
                         let posName = slot.slotsNeeded === 2 ? `Hitter ${idx + 1}` : `Player ${idx + 1}`;
-                        let pName = player ? `<strong class="text-white">${player}</strong> <span class="text-slate-400 font-normal">(${slot.phones[idx] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        let ageStr = slot.ages && slot.ages[idx] ? ` (Age ${slot.ages[idx]})` : '';
+                        let pName = player ? `<strong class="text-white">${player}</strong>${ageStr} <span class="text-slate-400 font-normal">(${slot.phones[idx] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
                             <span><strong class="text-slate-300">${posName}:</strong> ${pName}</span>
                             ${player ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
@@ -736,9 +754,10 @@
                     }
 
                     if (player) {
+                        const ageStr = slot.ages && slot.ages[idx] ? ` (Age ${slot.ages[idx]})` : '';
                         const phoneDisplay = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 font-normal">(${slot.phones[idx]})</span>` : '';
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-300">
-                            <span><strong class="text-white">${posName}:</strong> ${player}${phoneDisplay}</span>
+                            <span><strong class="text-white">${posName}:</strong> ${player}${ageStr}${phoneDisplay}</span>
                             <span class="text-rose-400 font-semibold text-[10px]">Filled (Locked)</span>
                         </div>`;
                     } else {
@@ -862,9 +881,10 @@
                                 if (idx === 0 || idx === 1) arrivalNote = `P${idx+1} (Arrive at Start)`;
                                 if (idx === 2 || idx === 3) arrivalNote = `P${idx+1} (Arrive +1 Hr)`;
                             }
+                            const ageStr = slot.ages && slot.ages[idx] ? ` (Age ${slot.ages[idx]})` : '';
                             const phoneStr = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 text-[11px]">(${slot.phones[idx]})</span>` : '';
                             
-                            bookedItems.push(`<span class="bg-slate-900 border border-slate-800 px-3 py-2 rounded text-xs text-slate-200 flex items-center gap-2"><i class="fa-solid fa-user text-blue-500"></i> <strong class="text-white">${p}</strong>${phoneStr} <span class="text-[10px] text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">(${arrivalNote})</span></span>`);
+                            bookedItems.push(`<span class="bg-slate-900 border border-slate-800 px-3 py-2 rounded text-xs text-slate-200 flex items-center gap-2"><i class="fa-solid fa-user text-blue-500"></i> <strong class="text-white">${p}</strong>${ageStr}${phoneStr} <span class="text-[10px] text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">(${arrivalNote})</span></span>`);
                         }
                     });
 
@@ -987,7 +1007,6 @@
                         } else {
                             const filledPlayers = slot.players.filter(p => p !== "").join(', ') || 'Open Slots';
                             const isFull = slot.players.every(p => p !== "");
-                            const firstOpenIdx = slot.players.findIndex(p => p === "");
 
                             if (isFull) {
                                 eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 bg-rose-950/60 border-rose-900/80 text-rose-200 cursor-not-allowed opacity-90`;
@@ -1049,7 +1068,9 @@
             document.getElementById('modal-slot-id').value = slot.id;
             document.getElementById('modal-slot-info').innerText = `${slot.type} — ${slot.datetime}`;
             document.getElementById('player-lastname').value = '';
+            document.getElementById('player-age').value = '';
             document.getElementById('player-lastname-2').value = '';
+            document.getElementById('parent-email').value = '';
             document.getElementById('parent-venmo').value = '';
             document.getElementById('parent-phone').value = '';
 
@@ -1125,20 +1146,27 @@
             const slotId = parseInt(document.getElementById('modal-slot-id').value);
             const positionIndex = parseInt(document.getElementById('modal-position-index').value);
             const player1 = document.getElementById('player-lastname').value.trim();
+            const playerAge = document.getElementById('player-age').value.trim();
             const player2 = document.getElementById('player-lastname-2').value.trim();
+            const email = document.getElementById('parent-email').value.trim();
             const venmo = document.getElementById('parent-venmo').value.trim();
             const phone = document.getElementById('parent-phone').value.trim();
 
             const slot = slots.find(s => s.id === slotId);
             if (slot) {
                 if (!slot.phones) slot.phones = new Array(slot.slotsNeeded).fill("");
+                if (!slot.ages) slot.ages = new Array(slot.slotsNeeded).fill("");
+                if (!slot.emails) slot.emails = new Array(slot.slotsNeeded).fill("");
                 
                 slot.players[positionIndex] = player1;
+                slot.ages[positionIndex] = playerAge;
                 slot.phones[positionIndex] = phone;
+                slot.emails[positionIndex] = email;
                 
                 if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0 && player2 && slot.players.length > 1) {
                     slot.players[1] = player2;
                     slot.phones[1] = phone;
+                    slot.emails[1] = email;
                 }
 
                 closeModal();
@@ -1147,7 +1175,8 @@
                 const templateParams = {
                     session_type: slot.type,
                     session_datetime: slot.datetime,
-                    player_name: player1 + (player2 ? ` & ${player2}` : ''),
+                    player_name: `${player1} (Age ${playerAge})` + (player2 ? ` & ${player2}` : ''),
+                    parent_email: email,
                     parent_venmo: venmo,
                     parent_phone: phone
                 };
@@ -1227,7 +1256,9 @@
                     datetime: datetimeFormatted,
                     slotsNeeded: slotsNeeded,
                     players: new Array(slotsNeeded).fill(""),
+                    ages: new Array(slotsNeeded).fill(""),
                     phones: new Array(slotsNeeded).fill(""),
+                    emails: new Array(slotsNeeded).fill(""),
                     isYouthDuoGroup: isYouthDuoGroup,
                     isTeamEvent: isTeamEvent
                 };
@@ -1347,7 +1378,9 @@
             const slot = slots.find(s => s.id === id);
             if (slot) {
                 slot.players = new Array(slot.slotsNeeded).fill("");
+                slot.ages = new Array(slot.slotsNeeded).fill("");
                 slot.phones = new Array(slot.slotsNeeded).fill("");
+                slot.emails = new Array(slot.slotsNeeded).fill("");
                 await saveSlots();
                 renderAdminBookings();
             }
