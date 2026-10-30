@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TX Pierce Baseball Training | Sequential Baseball</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Header & Navigation -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2 rounded-lg text-white font-black text-xl tracking-wider shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-baseball"></i> TP
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">TX Pierce Baseball Training</h1>
+                    <p class="text-xs text-slate-400">Coach Matt Pierce | The Kinkaid School, Houston, TX[cite: 2]</p>
+                </div>
+            </div>
+            <nav class="flex flex-wrap justify-center gap-2 md:gap-4">
+                <button onclick="switchTab('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home & Pricing</button>
+                <button onclick="switchTab('book')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book a Session</button>
+                <button onclick="switchTab('camps')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-camps">Camps & Info</button>
+                <button onclick="switchTab('admin')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-admin"><i class="fa-solid fa-lock mr-1"></i> Admin</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
+
+        <!-- TAB 1: HOME & PRICING -->
+        <section id="tab-home" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
+                <div class="max-w-2xl space-y-4">
+                    <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">WE ARE HERE TO MAKE BETTER HITTERS</h2>
+                    <p class="text-slate-300 text-base md:text-lg">
+                        Train with Coach Matt Pierce at The Kinkaid School (201 Kinkaid School Drive, Houston, TX 77024)[cite: 2]. For any payment concerns, please contact directly—we will work with you[cite: 2]!
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4 text-sm text-slate-300">
+                        <span><i class="fa-solid fa-phone text-blue-500 mr-2"></i> 832.443.2715[cite: 2]</span>
+                        <span><i class="fa-solid fa-envelope text-blue-500 mr-2"></i> Pierce.Matt.C@gmail.com[cite: 2]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Grid -->
+            <div class="space-y-4">
+                <div class="text-center space-y-1">
+                    <h3 class="text-2xl font-bold text-white">Hitting Lesson & Training Pricing</h3>
+                    <p class="text-sm text-slate-400">For any payment concerns please contact directly! We will work with you[cite: 2].</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <!-- 1v1 Pricing Card -->
+                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">1-ON-1 LESSON</span>
+                                <span class="text-2xl font-black text-white">$100 <span class="text-xs font-normal text-slate-400">/ 1HR</span>[cite: 2]</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-2">One Time Lesson Cost</h4>
+                            <p class="text-slate-400 text-sm mb-4">Full Lesson (1HR) tailored to hitting mechanics, swing sequence, and barrel path optimization.</p>
+                        </div>
+                        <button onclick="switchTab('book')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book 1v1 Lesson</button>
+                    </div>
+
+                    <!-- Group Pricing Card -->
+                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="bg-purple-500/10 text-purple-400 text-xs font-bold px-2.5 py-1 rounded">GROUP / CAMP</span>
+                                <span class="text-xl font-black text-white">$75 - $100 <span class="text-xs font-normal text-slate-400">/ player</span>[cite: 2]</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-2">Group Training & Sessions</h4>
+                            <ul class="text-slate-400 text-sm space-y-1.5 mb-4">
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> $75/Player for Group Sessions[cite: 2]</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> $100/Player for 2-Hour Sessions (min 4 players)[cite: 2]</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Youth Duo & Defense Rotations available</li>
+                            </ul>
+                        </div>
+                        <button onclick="switchTab('book')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Box -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 text-center space-y-4 shadow-lg">
+                <h4 class="font-bold text-white">Online Hitting Payment Options</h4>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://www.paypal.me/TXPierce" target="_blank" class="bg-blue-700 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg text-sm transition flex items-center gap-2 shadow">
+                        <i class="fa-brands fa-paypal"></i> PayPal: paypal.me/TXPierce[cite: 2]
+                    </a>
+                    <div class="bg-slate-800 text-slate-200 px-6 py-3 rounded-lg text-sm font-semibold flex items-center gap-2 border border-slate-700 shadow">
+                        <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Venmo: @TX-Pierce[cite: 2]
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: BOOK A SESSION -->
+        <section id="tab-book" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-white">Available Training Slots</h3>
+                    <p class="text-sm text-slate-400">Select an open slot below to book your session instantly.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-3">Available</span>
+                    <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> <span class="text-xs text-slate-300">Booked</span>
+                </div>
+            </div>
+
+            <!-- Available Slots Grid -->
+            <div id="slots-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 3: CAMPS & INFO -->
+        <section id="tab-camps" class="hidden space-y-6">
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-8 text-center space-y-4 max-w-2xl mx-auto shadow-xl">
+                <div class="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                    <i class="fa-solid fa-campground"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Upcoming Baseball Camps</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Contact directly for camps[cite: 2] and specialized clinics hosted at The Kinkaid School. Space is strictly limited to ensure quality reps and personalized mechanical feedback.
+                </p>
+                <div class="pt-4 border-t border-slate-800">
+                    <p class="text-sm font-semibold text-white mb-2">Ready to inquire about camps or lessons?</p>
+                    <a href="mailto:Pierce.Matt.C@gmail.com" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow">Contact Coach Matt Pierce</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: ADMIN PANEL -->
+        <section id="tab-admin" class="hidden space-y-6 max-w-3xl mx-auto">
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Coach Admin Dashboard</h3>
+                        <p class="text-xs text-slate-400">Add new availability slots or review player bookings.</p>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-400 text-xs px-2.5 py-1 rounded font-semibold">Admin Mode</span>
+                </div>
+
+                <!-- Add Slot Form -->
+                <form id="add-slot-form" onsubmit="addNewSlot(event)" class="space-y-4 bg-slate-900 p-4 rounded-lg border border-slate-800">
+                    <h4 class="font-bold text-sm text-white">Add New Training Slot</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Session Type</label>
+                            <select id="admin-type" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <option value="1v1 Hitting Lesson (1HR) - $100">1v1 Hitting Lesson (1HR) - $100[cite: 2]</option>
+                                <option value="Youth Duo Hitting & Fielding - $100/player">Youth Duo Hitting & Fielding - $100/player[cite: 2]</option>
+                                <option value="Group Training Session - $75/player">Group Training Session - $75/player[cite: 2]</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
+                            <input type="text" id="admin-datetime" placeholder="e.g. Mon, Nov 2, 2026 | 4:00 PM" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg text-sm transition shadow">Publish Slot to App</button>
+                </form>
+
+                <!-- Current Bookings Overview -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-white">Manage Active Bookings</h4>
+                    <div id="admin-bookings-list" class="space-y-2">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Complete Booking</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p id="modal-slot-info" class="text-xs text-blue-400 font-medium"></p>
+            <form id="booking-form" onsubmit="confirmBooking(event)" class="space-y-4">
+                <input type="hidden" id="modal-slot-id">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Player's Last Name</label>
+                    <input type="text" id="player-lastname" placeholder="e.g. Smith" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Parent Venmo Handle (@username)</label>
+                    <input type="text" id="parent-venmo" placeholder="e.g. @John-Smith-1" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <p class="text-xs text-slate-400">Payment will be billed via Venmo (@TX-Pierce) on Sunday prior to training[cite: 2].</p>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-lg text-sm font-medium transition">Cancel</button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg text-sm font-medium transition shadow">Confirm & Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>&copy; 2026 TX Pierce Baseball Training (Sequential Baseball Training). All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initial Default Slots
+        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots')) || [
+            { id: 1, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", booked: false, player: "", venmo: "" },
+            { id: 2, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", booked: false, player: "", venmo: "" },
+            { id: 3, type: "Youth Duo Hitting & Fielding - $100/player", datetime: "Wed, Nov 4, 2026 | 3:30 PM - 5:00 PM", booked: false, player: "", venmo: "" },
+            { id: 4, type: "Group Training Session - $75/player", datetime: "Thu, Nov 5, 2026 | 4:30 PM", booked: false, player: "", venmo: "" },
+            { id: 5, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Fri, Nov 6, 2026 | 6:00 PM", booked: false, player: "", venmo: "" }
+        ];
+
+        function saveSlots() {
+            localStorage.setItem('tx_pierce_slots', JSON.stringify(slots));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
+
+            if (tabId === 'book') renderSlots();
+            if (tabId === 'admin') renderAdminBookings();
+        }
+
+        function renderSlots() {
+            const container = document.getElementById('slots-container');
+            container.innerHTML = '';
+
+            slots.forEach(slot => {
+                const card = document.createElement('div');
+                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${slot.booked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
+                
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded ${slot.booked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
+                                ${slot.booked ? 'Booked' : 'Available'}
+                            </span>
+                            <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-base">${slot.type}</h4>
+                        ${slot.booked ? `<p class="text-xs text-slate-400">Player Last Name: <strong class="text-white">${slot.player}</strong></p>` : '<p class="text-xs text-slate-500">Open slot ready for player reservation.</p>'}
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-slate-800/60">
+                        ${slot.booked ? 
+                            '<button disabled class="w-full bg-slate-800 text-slate-500 py-2 rounded-lg text-xs font-medium cursor-not-allowed">Slot Filled</button>' : 
+                            `<button onclick="openBookingModal(${slot.id})" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-xs font-medium transition shadow">Book Slot</button>`
+                        }
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openBookingModal(id) {
+            const slot = slots.find(s => s.id === id);
+            document.getElementById('modal-slot-id').value = slot.id;
+            document.getElementById('modal-slot-info').innerText = `${slot.type} — ${slot.datetime}`;
+            document.getElementById('player-lastname').value = '';
+            document.getElementById('parent-venmo').value = '';
+            document.getElementById('booking-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+        }
+
+        function confirmBooking(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('modal-slot-id').value);
+            const player = document.getElementById('player-lastname').value.trim();
+            const venmo = document.getElementById('parent-venmo').value.trim();
+
+            const slot = slots.find(s => s.id === id);
+            if (slot) {
+                slot.booked = true;
+                slot.player = player;
+                slot.venmo = venmo;
+                saveSlots();
+                closeModal();
+                renderSlots();
+                alert(`Successfully booked for player ${player}! Coach Matt Pierce has been notified.`);
+            }
+        }
+
+        function addNewSlot(event) {
+            event.preventDefault();
+            const type = document.getElementById('admin-type').value;
+            const datetime = document.getElementById('admin-datetime').value.trim();
+
+            const newSlot = {
+                id: Date.now(),
+                type: type,
+                datetime: datetime,
+                booked: false,
+                player: '',
+                venmo: ''
+            };
+
+            slots.push(newSlot);
+            saveSlots();
+            document.getElementById('admin-datetime').value = '';
+            alert('New training slot successfully published!');
+            renderAdminBookings();
+        }
+
+        function renderAdminBookings() {
+            const list = document.getElementById('admin-bookings-list');
+            list.innerHTML = '';
+
+            if (slots.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-500">No training slots created yet.</p>';
+                return;
+            }
+
+            slots.forEach(slot => {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-900 border border-slate-800 p-3 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs shadow';
+                item.innerHTML = `
+                    <div>
+                        <strong class="text-white">${slot.datetime}</strong> (${slot.type})<br>
+                        <span class="${slot.booked ? 'text-emerald-400 font-medium' : 'text-slate-400'}">
+                            ${slot.booked ? `Booked by: ${slot.player} (Venmo: ${slot.venmo})` : 'Status: Open / Available'}
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        ${slot.booked ? `<button onclick="cancelBooking(${slot.id})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1 rounded transition">Clear Booking</button>` : ''}
+                        <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete Slot</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function cancelBooking(id) {
+            const slot = slots.find(s => s.id === id);
+            if (slot) {
+                slot.booked = false;
+                slot.player = '';
+                slot.venmo = '';
+                saveSlots();
+                renderAdminBookings();
+            }
+        }
+
+        function deleteSlot(id) {
+            slots = slots.filter(s => s.id !== id);
+            saveSlots();
+            renderAdminBookings();
+        }
+    </script>
+</body>
+</html>
