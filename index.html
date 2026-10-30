@@ -264,17 +264,18 @@
 
         let slots = [];
         const defaultSlots = [
-            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""] },
-            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""] },
+            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""], phones: [""] },
+            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""], phones: ["", ""] },
             { 
                 id: 3, 
                 type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
                 datetime: "Wed, Dec 2, 2026 | 3:30 PM", 
                 slotsNeeded: 4, 
                 players: ["", "", "", ""],
+                phones: ["", "", "", ""],
                 isYouthDuoGroup: true
             },
-            { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
+            { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""], phones: [""] }
         ];
 
         function formatDateTimeString(dateTimeStr) {
@@ -309,6 +310,10 @@
                     const data = await response.json();
                     if (data.record && data.record.slots) {
                         slots = data.record.slots;
+                        // Ensure legacy slots have phones array initialized
+                        slots.forEach(s => {
+                            if (!s.phones) s.phones = new Array(s.slotsNeeded).fill("");
+                        });
                     }
                 }
             } catch (e) {
@@ -396,8 +401,9 @@
                     }
 
                     if (player) {
+                        const phoneDisplay = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 font-normal">(${slot.phones[idx]})</span>` : '';
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-300">
-                            <span><strong class="text-white">${posName}:</strong> ${player}</span>
+                            <span><strong class="text-white">${posName}:</strong> ${player}${phoneDisplay}</span>
                             <span class="text-rose-400 font-semibold text-[10px]">Filled</span>
                         </div>`;
                     } else {
@@ -443,20 +449,29 @@
             }
 
             slots.forEach(slot => {
-                const filledPlayers = slot.players.filter(p => p !== "");
-                const card = document.createElement('div');
-                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3";
-
-                let rosterList = filledPlayers.length > 0 
-                    ? filledPlayers.map((p, idx) => {
+                // Collect all booked players with their respective phones and labels
+                let bookedItems = [];
+                slot.players.forEach((p, idx) => {
+                    if (p !== "") {
                         let arrivalNote = `P${idx+1}`;
                         if (slot.isYouthDuoGroup) {
                             if (idx === 0 || idx === 1) arrivalNote = `P${idx+1} (Arrive at Start)`;
                             if (idx === 2 || idx === 3) arrivalNote = `P${idx+1} (Arrive +1 Hr)`;
                         }
-                        return `<span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded text-xs text-slate-200"><i class="fa-solid fa-user text-blue-500 mr-1.5"></i> ${p} <span class="text-[10px] text-slate-400">(${arrivalNote})</span></span>`;
-                    }).join(' ')
+                        const phoneStr = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 text-[11px]">(${slot.phones[idx]})</span>` : '';
+                        bookedItems.innerHTML = ''; // safe init
+                        bookedItems.push(`<span class="bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded text-xs text-slate-200 flex items-center gap-1.5"><i class="fa-solid fa-user text-blue-500"></i> <strong class="text-white">${p}</strong>${phoneStr} <span class="text-[10px] text-slate-400">(${arrivalNote})</span></span>`);
+                    }
+                });
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3";
+
+                let rosterList = bookedItems.length > 0 
+                    ? bookedItems.join('')
                     : '<span class="text-xs text-slate-500 italic">No players booked yet (Open slots available)</span>';
+
+                const filledCount = slot.players.filter(p => p !== "").length;
 
                 card.innerHTML = `
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-800 pb-3">
@@ -464,8 +479,8 @@
                             <span class="text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">${slot.type}</span>
                             <h4 class="text-base font-bold text-white mt-1"><i class="fa-regular fa-calendar text-slate-400 mr-2"></i> ${slot.datetime}</h4>
                         </div>
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded ${filledPlayers.length === slot.slotsNeeded ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
-                            ${filledPlayers.length}/${slot.slotsNeeded} Slots Filled
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded ${filledCount === slot.slotsNeeded ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
+                            ${filledCount}/${slot.slotsNeeded} Slots Filled
                         </span>
                     </div>
                     <div class="space-y-1">
@@ -520,10 +535,14 @@
 
             const slot = slots.find(s => s.id === slotId);
             if (slot) {
+                if (!slot.phones) slot.phones = new Array(slot.slotsNeeded).fill("");
+                
                 slot.players[positionIndex] = player1;
+                slot.phones[positionIndex] = phone;
                 
                 if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0 && player2 && slot.players.length > 1) {
                     slot.players[1] = player2;
+                    slot.phones[1] = phone; // share phone for 2-on-1 first booker or leave blank if separate (assigning same parent phone)
                 }
 
                 closeModal();
@@ -568,6 +587,7 @@
                 datetime: datetime,
                 slotsNeeded: slotsNeeded,
                 players: new Array(slotsNeeded).fill(""),
+                phones: new Array(slotsNeeded).fill(""),
                 isYouthDuoGroup: isYouthDuoGroup
             };
 
@@ -613,6 +633,7 @@
             const slot = slots.find(s => s.id === id);
             if (slot) {
                 slot.players = new Array(slot.slotsNeeded).fill("");
+                slot.phones = new Array(slot.slotsNeeded).fill("");
                 await saveSlots();
                 renderAdminBookings();
             }
