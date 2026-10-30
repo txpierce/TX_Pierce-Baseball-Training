@@ -342,6 +342,13 @@
                 <input type="hidden" id="modal-slot-id">
                 <input type="hidden" id="modal-position-index">
                 
+                <div id="position-selector-container">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Select Open Player / Slot Position</label>
+                    <select id="modal-position-select" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <!-- Dynamically populated -->
+                    </select>
+                </div>
+
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1" id="label-hitter-1">Player's Last Name</label>
                     <input type="text" id="player-lastname" placeholder="e.g. Smith" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
@@ -987,7 +994,7 @@
                                 eventCard.title = "Session Full & Locked";
                             } else {
                                 eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 cursor-pointer transition hover:scale-[1.02] bg-blue-950/50 border-blue-900/60 text-blue-200 hover:border-blue-500`;
-                                eventCard.setAttribute('onclick', `openBookingModal(${slot.id}, ${firstOpenIdx})`);
+                                eventCard.setAttribute('onclick', `openBookingModal(${slot.id})`);
                                 eventCard.title = "Click to Book this Session";
                             }
 
@@ -1032,7 +1039,7 @@
             }
         }
 
-        function openBookingModal(slotId, positionIndex) {
+        function openBookingModal(slotId, specificIndex = null) {
             const slot = slots.find(s => s.id === slotId);
             if (slot.players.every(p => p !== "")) {
                 alert("This session is fully booked and locked.");
@@ -1040,17 +1047,65 @@
             }
 
             document.getElementById('modal-slot-id').value = slot.id;
-            document.getElementById('modal-position-index').value = positionIndex;
             document.getElementById('modal-slot-info').innerText = `${slot.type} — ${slot.datetime}`;
             document.getElementById('player-lastname').value = '';
             document.getElementById('player-lastname-2').value = '';
             document.getElementById('parent-venmo').value = '';
             document.getElementById('parent-phone').value = '';
 
+            const posSelect = document.getElementById('modal-position-select');
+            const posContainer = document.getElementById('position-selector-container');
+            posSelect.innerHTML = '';
+
+            let openIndices = [];
+            slot.players.forEach((p, idx) => {
+                if (p === "") openIndices.push(idx);
+            });
+
+            if (slot.slotsNeeded > 1) {
+                posContainer.classList.remove('hidden');
+                openIndices.forEach(idx => {
+                    let labelName = `Player ${idx + 1}`;
+                    if (slot.isYouthDuoGroup) {
+                        if (idx === 0 || idx === 1) labelName = `Player ${idx + 1} (Group 1 - Start Time)`;
+                        if (idx === 2 || idx === 3) labelName = `Player ${idx + 1} (Group 2 - Arrive +1 Hr)`;
+                    } else if (slot.slotsNeeded === 2) {
+                        labelName = `Hitter ${idx + 1}`;
+                    }
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = labelName;
+                    posSelect.appendChild(opt);
+                });
+                if (specificIndex !== null && openIndices.includes(specificIndex)) {
+                    posSelect.value = specificIndex;
+                }
+            } else {
+                posContainer.classList.add('hidden');
+                const opt = document.createElement('option');
+                opt.value = 0;
+                opt.innerText = "Player 1";
+                posSelect.appendChild(opt);
+            }
+
+            checkPositionRequirements();
+            posSelect.onchange = checkPositionRequirements;
+
+            document.getElementById('booking-modal').classList.remove('hidden');
+        }
+
+        function checkPositionRequirements() {
+            const slotId = parseInt(document.getElementById('modal-slot-id').value);
+            const slot = slots.find(s => s.id === slotId);
+            const posSelect = document.getElementById('modal-position-select');
+            const chosenIdx = posSelect ? parseInt(posSelect.value) : 0;
+
+            document.getElementById('modal-position-index').value = chosenIdx;
+
             const hitter2Container = document.getElementById('hitter-2-container');
             const labelHitter1 = document.getElementById('label-hitter-1');
 
-            if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0) {
+            if (slot && slot.type.includes("2-on-1 Lesson") && chosenIdx === 0) {
                 hitter2Container.classList.remove('hidden');
                 labelHitter1.innerText = "First Hitter's Last Name";
                 document.getElementById('player-lastname-2').required = true;
@@ -1059,8 +1114,6 @@
                 labelHitter1.innerText = "Player's Last Name";
                 document.getElementById('player-lastname-2').required = false;
             }
-
-            document.getElementById('booking-modal').classList.remove('hidden');
         }
 
         function closeModal() {
