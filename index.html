@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- Dynamic Announcement Banner (Placed below Hero Card) -->
+            <!-- Dynamic Announcement Banner -->
             <div id="announcement-banner-container"></div>
 
             <!-- Today's Booked Lessons Section -->
@@ -621,13 +621,12 @@
             alert("Announcement removed.");
         }
 
-        // Render Today's Sessions on Home Page matching the image layout
         function renderTodaysSlots() {
             const container = document.getElementById('todays-slots-container');
             if (!container) return;
             container.innerHTML = '';
 
-            const todayStr = "Oct 30, 2026"; // Current date simulated as Oct 30, 2026
+            const todayStr = "Oct 30, 2026";
             const todaysSlots = slots.filter(slot => !slot.isTeamEvent && !slot.isCampEvent && slot.datetime.includes(todayStr));
 
             if (todaysSlots.length === 0) {
@@ -693,16 +692,6 @@
                 `;
                 container.appendChild(card);
             });
-        }
-
-        function filterAndSwitchTab(type) {
-            currentFilter = type;
-            if (type === 'lessons') {
-                document.getElementById('book-header-title').innerText = "Available Private Lessons ($100 / 1HR)";
-            } else if (type === 'group') {
-                document.getElementById('book-header-title').innerText = "Available Youth Group Sessions ($100 / player)";
-            }
-            switchTab('book');
         }
 
         function filterBookings(type) {
@@ -792,7 +781,6 @@
             });
         }
 
-        // Agenda / My Schedule View Renderer (Only shows sessions with > 0 filled slots)
         function renderAgenda() {
             const container = document.getElementById('agenda-container');
             if (!container) return;
