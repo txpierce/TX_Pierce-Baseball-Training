@@ -11,8 +11,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            // Initialize EmailJS with your Public Key if needed, or pass it directly in send()
-            emailjs.init("YOUR_PUBLIC_KEY");
+            emailjs.init("NBBKHwkytX5n5eJJy");
         })();
     </script>
 </head>
@@ -388,8 +387,7 @@
                     parent_venmo: venmo
                 };
 
-                // Using your EmailJS Service ID and Template ID template_l7bpk0i
-                emailjs.send('service_uwpsp0v', 'template_l7bpk0i', templateParams)
+                emailjs.send('service_uwpsp0v', 'template_l7bpk0i', templateParams, 'NBBKHwkytX5n5eJJy')
                     .then(function(response) {
                         console.log('SUCCESS!', response.status, response.text);
                         alert(`Successfully booked for player(s)! Email notification sent to Coach Matt Pierce.`);
