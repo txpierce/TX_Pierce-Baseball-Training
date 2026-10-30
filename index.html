@@ -139,7 +139,7 @@
                 <p class="text-sm text-slate-400">Browse active baseball camps, view Google Drive flyers, or register via Google Forms.</p>
             </div>
             <div id="camps-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Dynamically populated via JS -->
+                <!-- Populated dynamically via JS -->
             </div>
         </section>
 
@@ -686,17 +686,22 @@
                             const filledPlayers = slot.players.filter(p => p !== "").join(', ') || 'Open Slots';
                             const isFull = slot.players.every(p => p !== "");
                             const firstOpenIdx = slot.players.findIndex(p => p === "");
-                            const targetIdx = firstOpenIdx !== -1 ? firstOpenIdx : 0;
 
-                            // Clickable and dynamically colored
-                            eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 cursor-pointer transition hover:scale-[1.02] ${isFull ? 'bg-rose-950/50 border-rose-900/60 text-rose-200 hover:border-rose-700' : 'bg-blue-950/50 border-blue-900/60 text-blue-200 hover:border-blue-500'}`;
-                            eventCard.setAttribute('onclick', `openBookingModal(${slot.id}, ${targetIdx})`);
-                            eventCard.title = isFull ? "Session Full (Click to review/manage)" : "Click to Book this Session";
+                            if (isFull) {
+                                // Locked & Red if fully booked
+                                eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 bg-rose-950/60 border-rose-900/80 text-rose-200 cursor-not-allowed opacity-90`;
+                                eventCard.title = "Session Full & Locked";
+                            } else {
+                                // Clickable & Blue if open spots remain
+                                eventCard.className = `p-1.5 rounded-lg border text-[11px] shadow-sm space-y-0.5 cursor-pointer transition hover:scale-[1.02] bg-blue-950/50 border-blue-900/60 text-blue-200 hover:border-blue-500`;
+                                eventCard.setAttribute('onclick', `openBookingModal(${slot.id}, ${firstOpenIdx})`);
+                                eventCard.title = "Click to Book this Session";
+                            }
 
                             eventCard.innerHTML = `
                                 <div class="font-bold flex items-center justify-between text-white">
                                     <span><i class="fa-regular fa-clock text-slate-400 mr-1 text-[10px]"></i>${timeStr}</span>
-                                    <span class="text-[9px] ${isFull ? 'text-rose-400' : 'text-emerald-400'}">${isFull ? 'Full' : 'Open'}</span>
+                                    <span class="text-[9px] ${isFull ? 'text-rose-400 font-bold' : 'text-emerald-400'}">${isFull ? 'Full (Locked)' : 'Open'}</span>
                                 </div>
                                 <div class="text-[10px] text-slate-300 font-semibold truncate">${shortType}</div>
                                 <div class="text-[10px] text-amber-400 truncate"><i class="fa-solid fa-user mr-1 text-[9px]"></i>${filledPlayers}</div>
@@ -736,6 +741,11 @@
 
         function openBookingModal(slotId, positionIndex) {
             const slot = slots.find(s => s.id === slotId);
+            if (slot.players.every(p => p !== "")) {
+                alert("This session is fully booked and locked.");
+                return;
+            }
+
             document.getElementById('modal-slot-id').value = slot.id;
             document.getElementById('modal-position-index').value = positionIndex;
             document.getElementById('modal-slot-info').innerText = `${slot.type} — ${slot.datetime}`;
