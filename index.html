@@ -31,7 +31,6 @@
             </div>
             <nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3">
                 <button onclick="switchTab('home')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home</button>
-                <button onclick="switchTab('book')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book a Session</button>
                 <button onclick="switchTab('calendar')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-calendar"><i class="fa-solid fa-calendar-alt mr-1"></i> Calendar View</button>
                 <button onclick="switchTab('camps')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-camps"><i class="fa-solid fa-campground mr-1"></i> Camps</button>
                 <button onclick="switchTab('agenda')" class="nav-btn px-3 py-2 rounded-lg text-xs md:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-agenda"><i class="fa-solid fa-calendar-days mr-1"></i> Schedule</button>
@@ -80,7 +79,7 @@
                                 <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 2-on-1 Lesson: $100 / hr (add both hitters during booking)</li>
                             </ul>
                         </div>
-                        <button onclick="filterAndSwitchTab('lessons')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book Lesson</button>
+                        <button onclick="switchTab('calendar')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book Lesson via Calendar</button>
                     </div>
 
                     <!-- Youth Group Pricing Card -->
@@ -96,7 +95,7 @@
                                 <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 3 & 4: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</li>
                             </ul>
                         </div>
-                        <button onclick="filterAndSwitchTab('group')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
+                        <button onclick="switchTab('calendar')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group via Calendar</button>
                     </div>
                 </div>
             </div>
@@ -116,35 +115,7 @@
             </div>
         </section>
 
-        <!-- TAB 2: BOOK A SESSION -->
-        <section id="tab-book" class="hidden space-y-6 max-w-4xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h3 class="text-2xl font-bold text-white" id="book-header-title">Available Training Slots</h3>
-                    <p class="text-sm text-slate-400">Select an open slot or player position below to book your spot. Syncs live across all devices.</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="filterBookings('all')" id="filter-btn-all" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium transition shadow">Show All</button>
-                    <div class="flex items-center gap-2">
-                        <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-2">Available</span>
-                        <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> <span class="text-xs text-slate-300">Filled</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Loading Indicator -->
-            <div id="loading-spinner" class="text-center py-12 text-slate-400">
-                <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-500 mb-2"></i>
-                <p class="text-sm">Fetching live schedule status...</p>
-            </div>
-
-            <!-- Available Slots Stacked Container -->
-            <div id="slots-container" class="space-y-4">
-                <!-- Dynamically populated via JavaScript -->
-            </div>
-        </section>
-
-        <!-- TAB 3: CALENDAR VIEW -->
+        <!-- TAB 2: CALENDAR VIEW -->
         <section id="tab-calendar" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
                 <button onclick="changeMonth(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-2 rounded text-sm transition font-medium"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
@@ -161,7 +132,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: CAMPS & CLINICS -->
+        <!-- TAB 3: CAMPS & CLINICS -->
         <section id="tab-camps" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="space-y-2">
                 <h3 class="text-2xl font-bold text-white">Upcoming Camps & Clinics</h3>
@@ -172,18 +143,18 @@
             </div>
         </section>
 
-        <!-- TAB 5: MY SCHEDULE (AGENDA VIEW) -->
+        <!-- TAB 4: MY SCHEDULE (AGENDA VIEW) -->
         <section id="tab-agenda" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="space-y-1">
                 <h3 class="text-2xl font-bold text-white">Weekly Training Schedule & Agenda</h3>
-                <p class="text-sm text-slate-400">View all booked training sessions, team practices, games, and camps in one consolidated timeline.</p>
+                <p class="text-sm text-slate-400">Viewing sessions that are partially or fully booked (0-filled sessions are hidden).</p>
             </div>
             <div id="agenda-container" class="space-y-4">
                 <!-- Populated dynamically via JS -->
             </div>
         </section>
 
-        <!-- TAB 6: ADMIN PANEL -->
+        <!-- TAB 5: ADMIN PANEL -->
         <section id="tab-admin" class="hidden space-y-6 max-w-4xl mx-auto">
             <!-- Schedule Manager Card -->
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
@@ -345,7 +316,6 @@
 
         let slots = [];
         let camps = [];
-        let currentFilter = 'all';
         let currentCalendarDate = new Date(2026, 10, 1); // Default to Nov 2026
 
         const defaultSlots = [
@@ -442,11 +412,6 @@
 
             sortSlotsChronologically();
 
-            if (!silent) {
-                const spinner = document.getElementById('loading-spinner');
-                if (spinner) spinner.classList.add('hidden');
-            }
-            renderSlots();
             renderAgenda();
             renderCalendar();
             renderCamps();
@@ -460,7 +425,6 @@
             sortSlotsChronologically();
             localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
             localStorage.setItem('tx_pierce_camps_backup', JSON.stringify(camps));
-            renderSlots();
             renderAgenda();
             renderCalendar();
             renderCamps();
@@ -497,124 +461,37 @@
                 btn.classList.add('bg-slate-800', 'text-slate-300');
             });
             const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
-            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
-
-            if (tabId === 'book') {
-                currentFilter = 'all';
-                document.getElementById('book-header-title').innerText = "Available Training Slots";
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
             }
 
-            if (tabId === 'book' || tabId === 'admin' || tabId === 'agenda' || tabId === 'calendar' || tabId === 'camps') {
+            if (tabId === 'calendar' || tabId === 'admin' || tabId === 'agenda' || tabId === 'camps') {
                 fetchSlots();
             }
         }
 
-        function filterAndSwitchTab(type) {
-            currentFilter = type;
-            if (type === 'lessons') {
-                document.getElementById('book-header-title').innerText = "Available Private Lessons ($100 / 1HR)";
-            } else if (type === 'group') {
-                document.getElementById('book-header-title').innerText = "Available Youth Group Sessions ($100 / player)";
-            }
-            switchTab('book');
-        }
-
-        function filterBookings(type) {
-            currentFilter = type;
-            if (type === 'all') {
-                document.getElementById('book-header-title').innerText = "Available Training Slots";
-            }
-            renderSlots();
-        }
-
-        function renderSlots() {
-            const container = document.getElementById('slots-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            let bookingSlots = slots.filter(slot => !slot.isTeamEvent && !slot.isCampEvent);
-
-            if (currentFilter === 'lessons') {
-                bookingSlots = bookingSlots.filter(s => s.type.includes("1-on-1 Lesson") || s.type.includes("2-on-1 Lesson"));
-            } else if (currentFilter === 'group') {
-                bookingSlots = bookingSlots.filter(s => s.type.includes("Youth Duo"));
-            }
-
-            if (bookingSlots.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">No matching training slots available at this time.</p>';
-                return;
-            }
-
-            bookingSlots.forEach(slot => {
-                const card = document.createElement('div');
-                const isFullyBooked = slot.players.every(p => p !== "");
-                
-                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-xl w-full ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
-                
-                let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
-                
-                if (slot.isYouthDuoGroup) {
-                    playerSlotsHtml += `<div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 1: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
-                }
-
-                slot.players.forEach((player, idx) => {
-                    if (slot.isYouthDuoGroup && idx === 2) {
-                        playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 2: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
-                    }
-
-                    let posName = `Player ${idx + 1}`;
-                    if (!slot.isYouthDuoGroup && slot.slotsNeeded === 2) {
-                        posName = `Hitter ${idx + 1}`;
-                    }
-
-                    if (player) {
-                        const phoneDisplay = slot.phones && slot.phones[idx] ? ` <span class="text-slate-400 font-normal">(${slot.phones[idx]})</span>` : '';
-                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-300">
-                            <span><strong class="text-white">${posName}:</strong> ${player}${phoneDisplay}</span>
-                            <span class="text-rose-400 font-semibold text-[10px]">Filled</span>
-                        </div>`;
-                    } else {
-                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-400">
-                            <span><strong class="text-slate-300">${posName}:</strong> Open Slot</span>
-                            <button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-1.5 rounded text-xs font-medium transition shadow">Book Spot</button>
-                        </div>`;
-                    }
-                });
-
-                if (slot.isYouthDuoGroup) {
-                    playerSlotsHtml += `<div class="mt-3 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center">
-                        <i class="fa-solid fa-circle-info mr-1"></i> All 4 Players: 30 Mins Combined Defense Together
-                    </div>`;
-                }
-
-                playerSlotsHtml += '</div>';
-
-                card.innerHTML = `
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded ${isFullyBooked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
-                                ${isFullyBooked ? 'Session Full' : 'Available Spots'}
-                            </span>
-                            <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime}</span>
-                        </div>
-                        <h4 class="font-bold text-white text-base">${slot.type}</h4>
-                        ${playerSlotsHtml}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Agenda / My Schedule View Renderer (Includes Lessons, Team Events & Camps)
+        // Agenda / My Schedule View Renderer (Only shows sessions with > 0 filled slots)
         function renderAgenda() {
             const container = document.getElementById('agenda-container');
             if (!container) return;
             container.innerHTML = '';
 
-            let allAgendaItems = [...slots];
+            let bookedAgendaItems = [];
+            
+            slots.forEach(slot => {
+                if (!slot.isTeamEvent && !slot.isCampEvent) {
+                    const filledCount = slot.players.filter(p => p !== "").length;
+                    if (filledCount > 0) {
+                        bookedAgendaItems.push(slot);
+                    }
+                } else if (slot.isTeamEvent) {
+                    bookedAgendaItems.push(slot);
+                }
+            });
+
             camps.forEach(c => {
-                allAgendaItems.push({
+                bookedAgendaItems.push({
                     id: c.id,
                     type: `Camp: ${c.title}`,
                     datetime: c.datetime || c.date,
@@ -624,18 +501,18 @@
                 });
             });
 
-            allAgendaItems.sort((a, b) => {
+            bookedAgendaItems.sort((a, b) => {
                 const dateA = new Date(a.datetime.replace(' |', ','));
                 const dateB = new Date(b.datetime.replace(' |', ','));
                 return dateA - dateB;
             });
 
-            if (allAgendaItems.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">No scheduled training sessions or events found.</p>';
+            if (bookedAgendaItems.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">No partially or fully booked training sessions found.</p>';
                 return;
             }
 
-            allAgendaItems.forEach(slot => {
+            bookedAgendaItems.forEach(slot => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3";
 
@@ -689,10 +566,7 @@
                         }
                     });
 
-                    let rosterList = bookedItems.length > 0 
-                        ? bookedItems.join('')
-                        : '<span class="text-xs text-slate-500 italic">No players booked yet (Open slots available)</span>';
-
+                    let rosterList = bookedItems.join('');
                     const filledCount = slot.players.filter(p => p !== "").length;
 
                     card.innerHTML = `
