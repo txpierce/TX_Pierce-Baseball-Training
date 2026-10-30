@@ -33,6 +33,7 @@
                 <button onclick="switchTab('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home & Pricing</button>
                 <button onclick="switchTab('book')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book a Session</button>
                 <button onclick="switchTab('agenda')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-agenda"><i class="fa-solid fa-calendar-days mr-1"></i> My Schedule</button>
+                <button onclick="switchTab('calendar')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-calendar"><i class="fa-solid fa-calendar-alt mr-1"></i> Calendar View</button>
                 <button onclick="switchTab('camps')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-camps">Camps & Info</button>
                 <button onclick="switchTab('admin')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-admin"><i class="fa-solid fa-lock mr-1"></i> Admin</button>
             </nav>
@@ -151,7 +152,24 @@
             </div>
         </section>
 
-        <!-- TAB 4: CAMPS & INFO -->
+        <!-- TAB 4: CALENDAR VIEW -->
+        <section id="tab-calendar" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <button onclick="changeMonth(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded text-sm transition"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
+                <h3 id="calendar-month-year" class="text-lg font-bold text-white">November 2026</h3>
+                <button onclick="changeMonth(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded text-sm transition">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-xl">
+                <div class="grid grid-cols-7 gap-2 text-center font-semibold text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2 pt-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: CAMPS & INFO -->
         <section id="tab-camps" class="hidden space-y-6">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-8 text-center space-y-4 max-w-2xl mx-auto shadow-xl">
                 <div class="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
@@ -168,7 +186,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN PANEL -->
+        <!-- TAB 6: ADMIN PANEL -->
         <section id="tab-admin" class="hidden space-y-6">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -263,6 +281,8 @@
         const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
 
         let slots = [];
+        let currentCalendarDate = new Date(2026, 10, 1); // Default to Nov 2026
+
         const defaultSlots = [
             { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""], phones: [""] },
             { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""], phones: ["", ""] },
@@ -342,6 +362,7 @@
             }
             renderSlots();
             renderAgenda();
+            renderCalendar();
             if (!document.getElementById('tab-admin').classList.contains('hidden')) {
                 renderAdminBookings();
             }
@@ -352,6 +373,7 @@
             localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
             renderSlots();
             renderAgenda();
+            renderCalendar();
 
             try {
                 await fetch(BIN_URL, {
@@ -379,7 +401,7 @@
             activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
             activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
 
-            if (tabId === 'book' || tabId === 'admin' || tabId === 'agenda') {
+            if (tabId === 'book' || tabId === 'admin' || tabId === 'agenda' || tabId === 'calendar') {
                 fetchSlots();
             }
         }
@@ -503,6 +525,66 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function changeMonth(direction) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthYearLabel = document.getElementById('calendar-month-year');
+            if (!grid || !monthYearLabel) return;
+
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            monthYearLabel.innerText = currentCalendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            grid.innerHTML = '';
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            // Blank spaces for previous month offset
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = "h-24 bg-slate-900/30 rounded-lg border border-slate-800/40 opacity-30";
+                grid.appendChild(emptyCell);
+            }
+
+            // Days of current month
+            for (let day = 1; day <= totalDays; day++) {
+                const cell = document.createElement('div');
+                cell.className = "h-24 bg-slate-900 border border-slate-800 rounded-lg p-1.5 overflow-y-auto flex flex-col justify-between";
+
+                const dateHeader = document.createElement('div');
+                dateHeader.className = "text-xs font-bold text-slate-400";
+                dateHeader.innerText = day;
+                cell.appendChild(dateHeader);
+
+                const eventsContainer = document.createElement('div');
+                eventsContainer.className = "space-y-1 mt-1 flex-grow";
+
+                slots.forEach(slot => {
+                    const slotDate = new Date(slot.datetime.replace(' |', ','));
+                    if (
+                        slotDate.getFullYear() === year &&
+                        slotDate.getMonth() === month &&
+                        slotDate.getDate() === day
+                    ) {
+                        const badge = document.createElement('div');
+                        const isFull = slot.players.every(p => p !== "");
+                        badge.className = `text-[10px] px-1.5 py-0.5 rounded truncate font-medium ${isFull ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`;
+                        badge.innerText = `${slot.datetime.split('|')[1]?.trim() || ''} - ${slot.type.split('(')[0]}`;
+                        badge.title = `${slot.type} (${slot.datetime})`;
+                        eventsContainer.appendChild(badge);
+                    }
+                });
+
+                cell.appendChild(eventsContainer);
+                grid.appendChild(cell);
+            }
         }
 
         function openBookingModal(slotId, positionIndex) {
