@@ -194,7 +194,8 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
-                            <input type="text" id="admin-datetime" placeholder="e.g. Mon, Nov 2, 2026 | 4:00 PM" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <!-- Changed to native calendar & time picker input -->
+                            <input type="datetime-local" id="admin-datetime" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 [color-scheme:dark]">
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg text-sm transition shadow">Publish Slot to App</button>
@@ -271,6 +272,22 @@
             },
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
+
+        // Helper to format raw datetime-local string (e.g. "2026-11-02T16:00") into clean readable text ("Mon, Nov 2, 2026 | 4:00 PM")
+        function formatDateTimeString(dateTimeStr) {
+            if (!dateTimeStr || !dateTimeStr.includes('T')) return dateTimeStr;
+            const dt = new Date(dateTimeStr);
+            if (isNaN(dt.getTime())) return dateTimeStr;
+            return dt.toLocaleString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric', 
+                hour: 'numeric', 
+                minute: '2-digit', 
+                hour12: true 
+            }).replace(',', ' |');
+        }
 
         async function fetchSlots() {
             try {
@@ -499,7 +516,9 @@
         async function addNewSlot(event) {
             event.preventDefault();
             const type = document.getElementById('admin-type').value;
-            const datetime = document.getElementById('admin-datetime').value.trim();
+            const rawDatetime = document.getElementById('admin-datetime').value;
+            const datetime = formatDateTimeString(rawDatetime);
+
             let slotsNeeded = 1;
             let isYouthDuoGroup = false;
 
