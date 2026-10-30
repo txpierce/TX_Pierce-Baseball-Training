@@ -59,31 +59,34 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <!-- 1v1 Pricing Card -->
+                    <!-- 1v1 & 2v1 Pricing Card -->
                     <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
                         <div>
                             <div class="flex justify-between items-center mb-4">
-                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">1-ON-1 LESSON</span>
+                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">LESSONS</span>
                                 <span class="text-2xl font-black text-white">$100 <span class="text-xs font-normal text-slate-400">/ 1HR</span></span>
                             </div>
-                            <h4 class="text-lg font-bold text-white mb-2">One Time Lesson Cost</h4>
-                            <p class="text-slate-400 text-sm mb-4">Full Lesson (1HR) tailored to hitting mechanics, swing sequence, and barrel path optimization.</p>
+                            <h4 class="text-lg font-bold text-white mb-2">Private Lesson Options</h4>
+                            <ul class="text-slate-400 text-sm space-y-1.5 mb-4">
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 1-on-1 Lesson: $100 / 1hr</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 2-on-1 Lesson: $100 / hr (add both hitters during booking)</li>
+                            </ul>
                         </div>
-                        <button onclick="switchTab('book')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book 1v1 Lesson</button>
+                        <button onclick="switchTab('book')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book Lesson</button>
                     </div>
 
-                    <!-- Group Pricing Card -->
+                    <!-- Youth Group Pricing Card -->
                     <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
                         <div>
                             <div class="flex justify-between items-center mb-4">
-                                <span class="bg-purple-500/10 text-purple-400 text-xs font-bold px-2.5 py-1 rounded">GROUP / CAMP</span>
-                                <span class="text-xl font-black text-white">$75 - $100 <span class="text-xs font-normal text-slate-400">/ player</span></span>
+                                <span class="bg-purple-500/10 text-purple-400 text-xs font-bold px-2.5 py-1 rounded">YOUTH GROUP (4 PLAYERS)</span>
+                                <span class="text-xl font-black text-white">$100 <span class="text-xs font-normal text-slate-400">/ player</span></span>
                             </div>
-                            <h4 class="text-lg font-bold text-white mb-2">Group Training & Sessions</h4>
+                            <h4 class="text-lg font-bold text-white mb-2">Youth Duo Hitting & Fielding (1.5 Hours)</h4>
                             <ul class="text-slate-400 text-sm space-y-1.5 mb-4">
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> $75/Player for Group Sessions</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> $100/Player for 2-Hour Sessions (min 4 players)</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Youth Duo & Defense Rotations available</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 2 players hit for 1 hour</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> All 4 players work on defense together for 30 min</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> First 2 players leave, remaining 2 players hit for 1 hour</li>
                             </ul>
                         </div>
                         <button onclick="switchTab('book')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
@@ -110,11 +113,11 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h3 class="text-2xl font-bold text-white">Available Training Slots</h3>
-                    <p class="text-sm text-slate-400">Select an open slot below to book your session instantly.</p>
+                    <p class="text-sm text-slate-400">Select an open slot or player position below to book your spot.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-3">Available</span>
-                    <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> <span class="text-xs text-slate-300">Booked</span>
+                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-3">Available Slot</span>
+                    <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> <span class="text-xs text-slate-300">Filled / Booked</span>
                 </div>
             </div>
 
@@ -159,9 +162,9 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Session Type</label>
                             <select id="admin-type" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                                <option value="1v1 Hitting Lesson (1HR) - $100">1v1 Hitting Lesson (1HR) - $100</option>
-                                <option value="Youth Duo Hitting & Fielding - $100/player">Youth Duo Hitting & Fielding - $100/player</option>
-                                <option value="Group Training Session - $75/player">Group Training Session - $75/player</option>
+                                <option value="1-on-1 Lesson (1HR) - $100">1-on-1 Lesson (1HR) - $100</option>
+                                <option value="2-on-1 Lesson (1HR) - $100">2-on-1 Lesson (1HR) - $100</option>
+                                <option value="Youth Duo Hitting & Fielding (1.5HR) - $100/player">Youth Duo Hitting & Fielding (1.5HR) - $100/player</option>
                             </select>
                         </div>
                         <div>
@@ -188,16 +191,24 @@
     <div id="booking-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-white">Complete Booking</h3>
+                <h3 class="text-lg font-bold text-white" id="modal-title">Complete Booking</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <p id="modal-slot-info" class="text-xs text-blue-400 font-medium"></p>
             <form id="booking-form" onsubmit="confirmBooking(event)" class="space-y-4">
                 <input type="hidden" id="modal-slot-id">
+                <input type="hidden" id="modal-position-index">
+                
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Player's Last Name</label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1" id="label-hitter-1">Player's Last Name</label>
                     <input type="text" id="player-lastname" placeholder="e.g. Smith" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
+
+                <div id="hitter-2-container" class="hidden">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Second Hitter's Last Name</label>
+                    <input type="text" id="player-lastname-2" placeholder="e.g. Jones" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Parent Venmo Handle (@username)</label>
                     <input type="text" id="parent-venmo" placeholder="e.g. @John-Smith-1" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
@@ -219,16 +230,15 @@
     <!-- JavaScript Application Logic -->
     <script>
         // Initial Default Slots
-        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots')) || [
-            { id: 1, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", booked: false, player: "", venmo: "" },
-            { id: 2, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", booked: false, player: "", venmo: "" },
-            { id: 3, type: "Youth Duo Hitting & Fielding - $100/player", datetime: "Wed, Nov 4, 2026 | 3:30 PM - 5:00 PM", booked: false, player: "", venmo: "" },
-            { id: 4, type: "Group Training Session - $75/player", datetime: "Thu, Nov 5, 2026 | 4:30 PM", booked: false, player: "", venmo: "" },
-            { id: 5, type: "1v1 Hitting Lesson (1HR) - $100", datetime: "Fri, Nov 6, 2026 | 6:00 PM", booked: false, player: "", venmo: "" }
+        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v2')) || [
+            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""] },
+            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""] },
+            { id: 3, type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", datetime: "Wed, Nov 4, 2026 | 3:30 PM - 5:00 PM", slotsNeeded: 4, players: ["", "", "", ""] },
+            { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
 
         function saveSlots() {
-            localStorage.setItem('tx_pierce_slots', JSON.stringify(slots));
+            localStorage.setItem('tx_pierce_slots_v2', JSON.stringify(slots));
         }
 
         function switchTab(tabId) {
@@ -253,36 +263,65 @@
 
             slots.forEach(slot => {
                 const card = document.createElement('div');
-                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${slot.booked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
+                const isFullyBooked = slot.players.every(p => p !== "");
                 
+                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
+                
+                let playerSlotsHtml = '<div class="space-y-2 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
+                slot.players.forEach((player, idx) => {
+                    const posName = slot.slotsNeeded === 4 ? `Player ${idx + 1} (P${idx + 1})` : slot.slotsNeeded === 2 ? `Hitter ${idx + 1}` : 'Player';
+                    if (player) {
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-800 text-slate-300">
+                            <span><strong class="text-white">${posName}:</strong> ${player}</span>
+                            <span class="text-rose-400 font-semibold text-[10px]">Filled</span>
+                        </div>`;
+                    } else {
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-800 text-slate-400">
+                            <span><strong class="text-slate-300">${posName}:</strong> Open Slot</span>
+                            <button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-[11px] font-medium transition shadow">Book Spot</button>
+                        </div>`;
+                    }
+                });
+                playerSlotsHtml += '</div>';
+
                 card.innerHTML = `
                     <div class="space-y-3">
                         <div class="flex justify-between items-start">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded ${slot.booked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
-                                ${slot.booked ? 'Booked' : 'Available'}
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded ${isFullyBooked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
+                                ${isFullyBooked ? 'Session Full' : 'Available Spots'}
                             </span>
                             <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime}</span>
                         </div>
                         <h4 class="font-bold text-white text-base">${slot.type}</h4>
-                        ${slot.booked ? `<p class="text-xs text-slate-400">Player Last Name: <strong class="text-white">${slot.player}</strong></p>` : '<p class="text-xs text-slate-500">Open slot ready for player reservation.</p>'}
-                    </div>
-                    <div class="pt-4 mt-4 border-t border-slate-800/60">
-                        ${slot.booked ? 
-                            '<button disabled class="w-full bg-slate-800 text-slate-500 py-2 rounded-lg text-xs font-medium cursor-not-allowed">Slot Filled</button>' : 
-                            `<button onclick="openBookingModal(${slot.id})" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-xs font-medium transition shadow">Book Slot</button>`
-                        }
+                        ${playerSlotsHtml}
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function openBookingModal(id) {
-            const slot = slots.find(s => s.id === id);
+        function openBookingModal(slotId, positionIndex) {
+            const slot = slots.find(s => s.id === slotId);
             document.getElementById('modal-slot-id').value = slot.id;
+            document.getElementById('modal-position-index').value = positionIndex;
             document.getElementById('modal-slot-info').innerText = `${slot.type} — ${slot.datetime}`;
             document.getElementById('player-lastname').value = '';
+            document.getElementById('player-lastname-2').value = '';
             document.getElementById('parent-venmo').value = '';
+
+            const hitter2Container = document.getElementById('hitter-2-container');
+            const labelHitter1 = document.getElementById('label-hitter-1');
+
+            if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0) {
+                hitter2Container.classList.remove('hidden');
+                labelHitter1.innerText = "First Hitter's Last Name";
+                document.getElementById('player-lastname-2').required = true;
+            } else {
+                hitter2Container.classList.add('hidden');
+                labelHitter1.innerText = "Player's Last Name";
+                document.getElementById('player-lastname-2').required = false;
+            }
+
             document.getElementById('booking-modal').classList.remove('hidden');
         }
 
@@ -292,19 +331,25 @@
 
         function confirmBooking(event) {
             event.preventDefault();
-            const id = parseInt(document.getElementById('modal-slot-id').value);
-            const player = document.getElementById('player-lastname').value.trim();
+            const slotId = parseInt(document.getElementById('modal-slot-id').value);
+            const positionIndex = parseInt(document.getElementById('modal-position-index').value);
+            const player1 = document.getElementById('player-lastname').value.trim();
+            const player2 = document.getElementById('player-lastname-2').value.trim();
             const venmo = document.getElementById('parent-venmo').value.trim();
 
-            const slot = slots.find(s => s.id === id);
+            const slot = slots.find(s => s.id === slotId);
             if (slot) {
-                slot.booked = true;
-                slot.player = player;
-                slot.venmo = venmo;
+                slot.players[positionIndex] = player1;
+                
+                // If it's a 2-on-1 booking and slot 0 was booked with a second hitter provided, fill slot 1 automatically
+                if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0 && player2 && slot.players.length > 1) {
+                    slot.players[1] = player2;
+                }
+
                 saveSlots();
                 closeModal();
                 renderSlots();
-                alert(`Successfully booked for player ${player}! Coach Matt Pierce has been notified.`);
+                alert(`Successfully booked for player(s)! Coach Matt Pierce has been notified.`);
             }
         }
 
@@ -312,14 +357,17 @@
             event.preventDefault();
             const type = document.getElementById('admin-type').value;
             const datetime = document.getElementById('admin-datetime').value.trim();
+            let slotsNeeded = 1;
+
+            if (type.includes("2-on-1 Lesson")) slotsNeeded = 2;
+            if (type.includes("Youth Duo")) slotsNeeded = 4;
 
             const newSlot = {
                 id: Date.now(),
                 type: type,
                 datetime: datetime,
-                booked: false,
-                player: '',
-                venmo: ''
+                slotsNeeded: slotsNeeded,
+                players: new Array(slotsNeeded).fill("")
             };
 
             slots.push(newSlot);
@@ -339,30 +387,30 @@
             }
 
             slots.forEach(slot => {
+                const filledCount = slot.players.filter(p => p !== "").length;
                 const item = document.createElement('div');
                 item.className = 'bg-slate-900 border border-slate-800 p-3 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs shadow';
+                
+                let playerSummary = slot.players.map((p, i) => `P${i+1}: ${p || 'Open'}`).join(' | ');
+
                 item.innerHTML = `
                     <div>
                         <strong class="text-white">${slot.datetime}</strong> (${slot.type})<br>
-                        <span class="${slot.booked ? 'text-emerald-400 font-medium' : 'text-slate-400'}">
-                            ${slot.booked ? `Booked by: ${slot.player} (Venmo: ${slot.venmo})` : 'Status: Open / Available'}
-                        </span>
+                        <span class="text-slate-300">Slots Filled: ${filledCount}/${slot.slotsNeeded} [ ${playerSummary} ]</span>
                     </div>
                     <div class="flex gap-2">
-                        ${slot.booked ? `<button onclick="cancelBooking(${slot.id})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1 rounded transition">Clear Booking</button>` : ''}
-                        <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete Slot</button>
+                        <button onclick="resetSlot(${slot.id})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1 rounded transition">Reset Slots</button>
+                        <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete</button>
                     </div>
                 `;
                 list.appendChild(item);
             });
         }
 
-        function cancelBooking(id) {
+        function resetSlot(id) {
             const slot = slots.find(s => s.id === id);
             if (slot) {
-                slot.booked = false;
-                slot.player = '';
-                slot.venmo = '';
+                slot.players = new Array(slot.slotsNeeded).fill("");
                 saveSlots();
                 renderAdminBookings();
             }
