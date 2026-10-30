@@ -59,11 +59,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <!-- 1v1 & 2v1 Pricing Card -->
+                    <!-- Lessons Pricing Card -->
                     <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
                         <div>
                             <div class="flex justify-between items-center mb-4">
-                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">LESSONS</span>
+                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">PRIVATE LESSONS</span>
                                 <span class="text-2xl font-black text-white">$100 <span class="text-xs font-normal text-slate-400">/ 1HR</span></span>
                             </div>
                             <h4 class="text-lg font-bold text-white mb-2">Private Lesson Options</h4>
@@ -84,9 +84,9 @@
                             </div>
                             <h4 class="text-lg font-bold text-white mb-2">Youth Duo Hitting & Fielding (1.5 Hours)</h4>
                             <ul class="text-slate-400 text-sm space-y-1.5 mb-4">
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 2 players hit for 1 hour</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> All 4 players work on defense together for 30 min</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> First 2 players leave, remaining 2 players hit for 1 hour</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 1 & 2: 4:00pm - 5:00pm Hitting</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 1-4: 5:00pm - 5:30pm Defense</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 3 & 4: 5:30pm - 6:30pm Hitting</li>
                             </ul>
                         </div>
                         <button onclick="switchTab('book')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
@@ -116,7 +116,7 @@
                     <p class="text-sm text-slate-400">Select an open slot or player position below to book your spot.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-3">Available Slot</span>
+                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-xs text-slate-300 mr-3">Available Spot</span>
                     <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> <span class="text-xs text-slate-300">Filled / Booked</span>
                 </div>
             </div>
@@ -230,15 +230,22 @@
     <!-- JavaScript Application Logic -->
     <script>
         // Initial Default Slots
-        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v2')) || [
+        let slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v3')) || [
             { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""] },
             { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""] },
-            { id: 3, type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", datetime: "Wed, Nov 4, 2026 | 3:30 PM - 5:00 PM", slotsNeeded: 4, players: ["", "", "", ""] },
+            { 
+                id: 3, 
+                type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
+                datetime: "Wed, Nov 4, 2026 | 4:00 PM - 5:30 PM", 
+                slotsNeeded: 4, 
+                players: ["", "", "", ""],
+                isYouthDuoGroup: true
+            },
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
 
         function saveSlots() {
-            localStorage.setItem('tx_pierce_slots_v2', JSON.stringify(slots));
+            localStorage.setItem('tx_pierce_slots_v3', JSON.stringify(slots));
         }
 
         function switchTab(tabId) {
@@ -268,8 +275,16 @@
                 card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-lg ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
                 
                 let playerSlotsHtml = '<div class="space-y-2 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
+                
                 slot.players.forEach((player, idx) => {
-                    const posName = slot.slotsNeeded === 4 ? `Player ${idx + 1} (P${idx + 1})` : slot.slotsNeeded === 2 ? `Hitter ${idx + 1}` : 'Player';
+                    let posName = `Player ${idx + 1}`;
+                    if (slot.isYouthDuoGroup) {
+                        if (idx === 0 || idx === 1) posName = `Player ${idx + 1} (4:00pm - 5:00pm Hitting)`;
+                        if (idx === 2 || idx === 3) posName = `Player ${idx + 1} (5:30pm - 6:30pm Hitting)`;
+                    } else if (slot.slotsNeeded === 2) {
+                        posName = `Hitter ${idx + 1}`;
+                    }
+
                     if (player) {
                         playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-800 text-slate-300">
                             <span><strong class="text-white">${posName}:</strong> ${player}</span>
@@ -282,6 +297,13 @@
                         </div>`;
                     }
                 });
+
+                if (slot.isYouthDuoGroup) {
+                    playerSlotsHtml += `<div class="mt-2 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center">
+                        <i class="fa-solid fa-circle-info mr-1"></i> All 4 Players Defense: 5:00pm - 5:30pm
+                    </div>`;
+                }
+
                 playerSlotsHtml += '</div>';
 
                 card.innerHTML = `
@@ -341,7 +363,6 @@
             if (slot) {
                 slot.players[positionIndex] = player1;
                 
-                // If it's a 2-on-1 booking and slot 0 was booked with a second hitter provided, fill slot 1 automatically
                 if (slot.type.includes("2-on-1 Lesson") && positionIndex === 0 && player2 && slot.players.length > 1) {
                     slot.players[1] = player2;
                 }
@@ -358,16 +379,21 @@
             const type = document.getElementById('admin-type').value;
             const datetime = document.getElementById('admin-datetime').value.trim();
             let slotsNeeded = 1;
+            let isYouthDuoGroup = false;
 
             if (type.includes("2-on-1 Lesson")) slotsNeeded = 2;
-            if (type.includes("Youth Duo")) slotsNeeded = 4;
+            if (type.includes("Youth Duo")) {
+                slotsNeeded = 4;
+                isYouthDuoGroup = true;
+            }
 
             const newSlot = {
                 id: Date.now(),
                 type: type,
                 datetime: datetime,
                 slotsNeeded: slotsNeeded,
-                players: new Array(slotsNeeded).fill("")
+                players: new Array(slotsNeeded).fill(""),
+                isYouthDuoGroup: isYouthDuoGroup
             };
 
             slots.push(newSlot);
