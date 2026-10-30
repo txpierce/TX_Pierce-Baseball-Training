@@ -40,10 +40,10 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
 
         <!-- TAB 1: HOME & PRICING -->
-        <section id="tab-home" class="space-y-8">
+        <section id="tab-home" class="space-y-8 max-w-none">
             <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
                 <div class="max-w-2xl space-y-4">
                     <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
@@ -134,14 +134,14 @@
                 <p class="text-sm">Fetching live schedule status...</p>
             </div>
 
-            <!-- Available Slots Grid - Flex Container with Sequential Ordering -->
-            <div id="slots-container" class="flex flex-wrap gap-4">
+            <!-- Available Slots Stacked Container -->
+            <div id="slots-container" class="space-y-4">
                 <!-- Dynamically populated via JavaScript -->
             </div>
         </section>
 
         <!-- TAB 3: MY SCHEDULE (AGENDA VIEW) -->
-        <section id="tab-agenda" class="hidden space-y-6 max-w-4xl mx-auto">
+        <section id="tab-agenda" class="hidden space-y-6">
             <div class="space-y-1">
                 <h3 class="text-2xl font-bold text-white">Weekly Training Schedule & Agenda</h3>
                 <p class="text-sm text-slate-400">View all booked training sessions and confirmed player lineups in one consolidated timeline.</p>
@@ -169,7 +169,7 @@
         </section>
 
         <!-- TAB 5: ADMIN PANEL -->
-        <section id="tab-admin" class="hidden space-y-6 max-w-3xl mx-auto">
+        <section id="tab-admin" class="hidden space-y-6">
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                     <div>
@@ -372,8 +372,8 @@
                 const card = document.createElement('div');
                 const isFullyBooked = slot.players.every(p => p !== "");
                 
-                // Responsive card width style for strict left-to-right sequential flow
-                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-xl w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
+                // Full width stacked card layout
+                card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-xl w-full ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
                 
                 let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
                 
@@ -392,14 +392,14 @@
                     }
 
                     if (player) {
-                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-800 text-slate-300">
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-300">
                             <span><strong class="text-white">${posName}:</strong> ${player}</span>
                             <span class="text-rose-400 font-semibold text-[10px]">Filled</span>
                         </div>`;
                     } else {
-                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-800 text-slate-400">
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-900 p-2.5 rounded border border-slate-800 text-slate-400">
                             <span><strong class="text-slate-300">${posName}:</strong> Open Slot</span>
-                            <button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-[11px] font-medium transition shadow">Book Spot</button>
+                            <button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-1.5 rounded text-xs font-medium transition shadow">Book Spot</button>
                         </div>`;
                     }
                 });
