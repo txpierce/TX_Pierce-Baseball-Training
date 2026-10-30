@@ -237,6 +237,12 @@
                     <label class="block text-xs font-medium text-slate-400 mb-1">Parent Venmo Handle (@username)</label>
                     <input type="text" id="parent-venmo" placeholder="e.g. @John-Smith-1" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Parent Phone Number</label>
+                    <input type="tel" id="parent-phone" placeholder="e.g. 832-555-1234" required class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
                 <p class="text-xs text-slate-400">Payment requests will be coordinated manually by Coach Matt Pierce.</p>
                 <div class="flex gap-3 pt-2">
                     <button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-lg text-sm font-medium transition">Cancel</button>
@@ -286,7 +292,6 @@
             }).replace(',', ' |');
         }
 
-        // Helper to sort slots chronologically by actual date and time
         function sortSlotsChronologically() {
             slots.sort((a, b) => {
                 const dateA = new Date(a.datetime.replace(' |', ','));
@@ -372,7 +377,6 @@
                 const card = document.createElement('div');
                 const isFullyBooked = slot.players.every(p => p !== "");
                 
-                // Full width stacked card layout
                 card.className = `bg-slate-950 border rounded-xl p-5 flex flex-col justify-between transition shadow-xl w-full ${isFullyBooked ? 'border-rose-900/50 bg-rose-950/10' : 'border-slate-800 hover:border-slate-700'}`;
                 
                 let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
@@ -428,7 +432,6 @@
             });
         }
 
-        // Agenda / My Schedule View Renderer
         function renderAgenda() {
             const container = document.getElementById('agenda-container');
             if (!container) return;
@@ -484,6 +487,7 @@
             document.getElementById('player-lastname').value = '';
             document.getElementById('player-lastname-2').value = '';
             document.getElementById('parent-venmo').value = '';
+            document.getElementById('parent-phone').value = '';
 
             const hitter2Container = document.getElementById('hitter-2-container');
             const labelHitter1 = document.getElementById('label-hitter-1');
@@ -512,6 +516,7 @@
             const player1 = document.getElementById('player-lastname').value.trim();
             const player2 = document.getElementById('player-lastname-2').value.trim();
             const venmo = document.getElementById('parent-venmo').value.trim();
+            const phone = document.getElementById('parent-phone').value.trim();
 
             const slot = slots.find(s => s.id === slotId);
             if (slot) {
@@ -529,7 +534,8 @@
                     session_type: slot.type,
                     session_datetime: slot.datetime,
                     player_name: player1 + (player2 ? ` & ${player2}` : ''),
-                    parent_venmo: venmo
+                    parent_venmo: venmo,
+                    parent_phone: phone
                 };
 
                 emailjs.send('service_uwpsp0v', 'template_l7bpk0i', templateParams, 'NBBKHwkytX5n5eJJy')
