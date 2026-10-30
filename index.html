@@ -41,10 +41,13 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 space-y-8">
 
         <!-- TAB 1: HOME & PRICING -->
         <section id="tab-home" class="space-y-8 max-w-4xl mx-auto">
+            <!-- Dynamic Announcement Banner -->
+            <div id="announcement-banner-container"></div>
+
             <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
                 <div class="max-w-2xl space-y-4">
                     <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
@@ -56,6 +59,23 @@
                         <span><i class="fa-solid fa-phone text-blue-500 mr-2"></i> 832.443.2715</span>
                         <span><i class="fa-solid fa-envelope text-blue-500 mr-2"></i> Pierce.Matt.C@gmail.com</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Today's Booked Lessons Section -->
+            <div class="space-y-4 bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-day text-blue-500"></i> Today's Training Sessions & Rosters
+                        </h3>
+                        <p class="text-xs text-slate-400">Live view of scheduled hitting lessons and player rosters for today (<span id="today-date-label">Fri, Oct 30, 2026</span>).</p>
+                    </div>
+                    <span class="bg-blue-600/20 text-blue-400 text-xs px-3 py-1 rounded-full font-semibold border border-blue-500/30">Today's Lineup</span>
+                </div>
+
+                <div id="todays-slots-container" class="space-y-4">
+                    <!-- Populated dynamically via JavaScript -->
                 </div>
             </div>
 
@@ -80,7 +100,7 @@
                                 <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 2-on-1 Lesson: $100 / hr (add both hitters during booking)</li>
                             </ul>
                         </div>
-                        <button onclick="filterAndSwitchTab('lessons')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book Lesson</button>
+                        <button onclick="switchTab('calendar')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition text-sm shadow">Book Lesson via Calendar</button>
                     </div>
 
                     <!-- Youth Group Pricing Card -->
@@ -96,7 +116,7 @@
                                 <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 3 & 4: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</li>
                             </ul>
                         </div>
-                        <button onclick="filterAndSwitchTab('group')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
+                        <button onclick="switchTab('calendar')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group via Calendar</button>
                     </div>
                 </div>
             </div>
@@ -185,6 +205,24 @@
 
         <!-- TAB 6: ADMIN PANEL -->
         <section id="tab-admin" class="hidden space-y-6 max-w-4xl mx-auto">
+            <!-- Announcement Manager Card -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-4 shadow-xl">
+                <div class="border-b border-slate-800 pb-3">
+                    <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-bullhorn text-blue-500 mr-2"></i> Coach Announcement Manager</h3>
+                    <p class="text-xs text-slate-400">Publish a live announcement banner on the Home page.</p>
+                </div>
+                <form id="announcement-form" onsubmit="saveAnnouncement(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Announcement Text</label>
+                        <textarea id="admin-announcement-text" rows="2" placeholder="e.g. Due to rain, hitting lessons today are moved to indoor facility..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg text-xs transition shadow">Publish Announcement</button>
+                        <button type="button" onclick="clearAnnouncement()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 font-medium px-4 py-2 rounded-lg text-xs transition">Remove Announcement</button>
+                    </div>
+                </form>
+            </div>
+
             <!-- Schedule Manager Card -->
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-6 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -345,19 +383,20 @@
 
         let slots = [];
         let camps = [];
+        let announcement = "";
         let currentFilter = 'all';
-        let currentCalendarDate = new Date(2026, 10, 1); // Default to Nov 2026
+        let currentCalendarDate = new Date(2026, 9, 30); // Default to Oct 30, 2026
 
         const defaultSlots = [
-            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""], phones: [""] },
-            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""], phones: ["", ""] },
+            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 4:00 PM", slotsNeeded: 1, players: ["Smith"], phones: ["832-555-1234"] },
+            { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 5:00 PM", slotsNeeded: 2, players: ["Johnson", "Davis"], phones: ["832-555-5678", "832-555-9012"] },
             { 
                 id: 3, 
                 type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
-                datetime: "Wed, Dec 2, 2026 | 3:30 PM", 
+                datetime: "Fri, Oct 30, 2026 | 3:30 PM", 
                 slotsNeeded: 4, 
-                players: ["", "", "", ""],
-                phones: ["", "", "", ""],
+                players: ["Miller", "Garcia", "", ""],
+                phones: ["832-555-1111", "832-555-2222", "", ""],
                 isYouthDuoGroup: true
             },
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""], phones: [""] }
@@ -429,6 +468,9 @@
                     } else if (!camps || camps.length === 0) {
                         camps = defaultCamps;
                     }
+                    if (data.record && data.record.announcement !== undefined) {
+                        announcement = data.record.announcement;
+                    }
                 }
             } catch (e) {
                 console.log('Using local fallback.');
@@ -438,6 +480,9 @@
                 if (camps.length === 0) {
                     camps = JSON.parse(localStorage.getItem('tx_pierce_camps_backup')) || defaultCamps;
                 }
+                if (!announcement) {
+                    announcement = localStorage.getItem('tx_pierce_announcement') || "";
+                }
             }
 
             sortSlotsChronologically();
@@ -446,6 +491,8 @@
                 const spinner = document.getElementById('loading-spinner');
                 if (spinner) spinner.classList.add('hidden');
             }
+            renderAnnouncementBanner();
+            renderTodaysSlots();
             renderSlots();
             renderAgenda();
             renderCalendar();
@@ -453,6 +500,7 @@
             if (!document.getElementById('tab-admin').classList.contains('hidden')) {
                 renderAdminBookings();
                 renderAdminCamps();
+                document.getElementById('admin-announcement-text').value = announcement;
             }
         }
 
@@ -460,6 +508,9 @@
             sortSlotsChronologically();
             localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
             localStorage.setItem('tx_pierce_camps_backup', JSON.stringify(camps));
+            localStorage.setItem('tx_pierce_announcement', announcement);
+            renderAnnouncementBanner();
+            renderTodaysSlots();
             renderSlots();
             renderAgenda();
             renderCalendar();
@@ -472,7 +523,7 @@
                         'Content-Type': 'application/json',
                         'X-Master-Key': MASTER_KEY
                     },
-                    body: JSON.stringify({ slots: slots, camps: camps })
+                    body: JSON.stringify({ slots: slots, camps: camps, announcement: announcement })
                 });
             } catch (err) {
                 console.log('Cloud sync error.');
@@ -480,7 +531,6 @@
         }
 
         function switchTab(tabId) {
-            // Check password if trying to access admin tab
             if (tabId === 'admin') {
                 const enteredPass = prompt("Enter Admin Password:");
                 if (enteredPass !== ADMIN_PASSWORD) {
@@ -507,9 +557,116 @@
                 document.getElementById('book-header-title').innerText = "Available Training Slots";
             }
 
-            if (tabId === 'book' || tabId === 'calendar' || tabId === 'admin' || tabId === 'agenda' || tabId === 'camps') {
+            if (tabId === 'admin') {
+                document.getElementById('admin-announcement-text').value = announcement;
+            }
+
+            if (tabId === 'book' || tabId === 'calendar' || tabId === 'admin' || tabId === 'agenda' || tabId === 'camps' || tabId === 'home') {
                 fetchSlots();
             }
+        }
+
+        function renderAnnouncementBanner() {
+            const container = document.getElementById('announcement-banner-container');
+            if (!container) return;
+            if (!announcement || announcement.trim() === "") {
+                container.innerHTML = "";
+                return;
+            }
+            container.innerHTML = `
+                <div class="bg-blue-600/20 border border-blue-500/40 rounded-xl p-4 flex items-start gap-3 shadow-lg">
+                    <i class="fa-solid fa-bullhorn text-blue-400 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-blue-400">Coach Announcement</h4>
+                        <p class="text-sm text-slate-200 mt-0.5">${announcement}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function saveAnnouncement(event) {
+            event.preventDefault();
+            announcement = document.getElementById('admin-announcement-text').value.trim();
+            await saveSlots();
+            alert("Announcement published live on the Home page!");
+        }
+
+        async function clearAnnouncement() {
+            announcement = "";
+            document.getElementById('admin-announcement-text').value = "";
+            await saveSlots();
+            alert("Announcement removed.");
+        }
+
+        // Render Today's Sessions on Home Page matching the image layout
+        function renderTodaysSlots() {
+            const container = document.getElementById('todays-slots-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const todayStr = "Oct 30, 2026"; // Current date simulated as Oct 30, 2026
+            const todaysSlots = slots.filter(slot => !slot.isTeamEvent && !slot.isCampEvent && slot.datetime.includes(todayStr));
+
+            if (todaysSlots.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No hitting lessons scheduled for today.</p>';
+                return;
+            }
+
+            todaysSlots.forEach(slot => {
+                const card = document.createElement('div');
+                const isFullyBooked = slot.players.every(p => p !== "");
+                card.className = `bg-slate-900 border rounded-xl p-5 space-y-4 shadow-md ${isFullyBooked ? 'border-rose-900/50' : 'border-slate-800'}`;
+
+                let playerSlotsHtml = '';
+
+                if (slot.isYouthDuoGroup) {
+                    playerSlotsHtml += `<div class="space-y-3">
+                        <div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 1: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
+                    
+                    for (let i = 0; i < 2; i++) {
+                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong> <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
+                            <span><strong class="text-slate-300">Player ${i+1}:</strong> ${pName}</span>
+                            ${slot.players[i] ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${i})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
+                        </div>`;
+                    }
+
+                    playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 2: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
+
+                    for (let i = 2; i < 4; i++) {
+                        let pName = slot.players[i] ? `<strong class="text-white">${slot.players[i]}</strong> <span class="text-slate-400 font-normal">(${slot.phones[i] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
+                            <span><strong class="text-slate-300">Player ${i+1}:</strong> ${pName}</span>
+                            ${slot.players[i] ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${i})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
+                        </div>`;
+                    }
+
+                    playerSlotsHtml += `<div class="mt-2 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center"><i class="fa-solid fa-circle-info mr-1"></i> All 4 Players: 30 Mins Combined Defense Together</div></div>`;
+                } else {
+                    slot.players.forEach((player, idx) => {
+                        let posName = slot.slotsNeeded === 2 ? `Hitter ${idx + 1}` : `Player ${idx + 1}`;
+                        let pName = player ? `<strong class="text-white">${player}</strong> <span class="text-slate-400 font-normal">(${slot.phones[idx] || ''})</span>` : '<span class="text-slate-500">Open Slot</span>';
+                        playerSlotsHtml += `<div class="flex justify-between items-center bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
+                            <span><strong class="text-slate-300">${posName}:</strong> ${pName}</span>
+                            ${player ? '<span class="text-rose-400 font-semibold text-[11px]">Filled</span>' : `<button onclick="openBookingModal(${slot.id}, ${idx})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium transition">Book Spot</button>`}
+                        </div>`;
+                    });
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded ${isFullyBooked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
+                            ${isFullyBooked ? 'Session Full' : 'Available Spots'}
+                        </span>
+                        <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime}</span>
+                    </div>
+                    <h4 class="font-bold text-white text-base">${slot.type}</h4>
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        ${playerSlotsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         function filterAndSwitchTab(type) {
