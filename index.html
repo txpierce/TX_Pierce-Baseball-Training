@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- Dynamic Announcement Banner -->
+            <!-- Dynamic Announcement Banner (Placed below Hero Card) -->
             <div id="announcement-banner-container"></div>
 
             <!-- Today's Booked Lessons Section -->
@@ -1177,8 +1177,8 @@
                     session_datetime: slot.datetime,
                     player_name: `${player1} (Age ${playerAge})` + (player2 ? ` & ${player2}` : ''),
                     parent_email: email,
-                    parent_venmo: venmo,
-                    parent_phone: phone
+                    parent_phone: phone,
+                    parent_venmo: venmo
                 };
 
                 emailjs.send('service_uwpsp0v', 'template_l7bpk0i', templateParams, 'NBBKHwkytX5n5eJJy')
