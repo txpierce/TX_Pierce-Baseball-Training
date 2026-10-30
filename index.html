@@ -91,9 +91,8 @@
                             </div>
                             <h4 class="text-lg font-bold text-white mb-2">Youth Duo Hitting & Fielding (1.5 Hours)</h4>
                             <ul class="text-slate-400 text-sm space-y-1.5 mb-4">
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 1 & 2: 1 Hour Hitting Rotation</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 1-4: 30 Mins Combined Defense</li>
-                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 3 & 4: 1 Hour Hitting Rotation</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 1 & 2: Arrive at Start Time (1hr Hitting + 30m Defense)</li>
+                                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Players 3 & 4: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</li>
                             </ul>
                         </div>
                         <button onclick="switchTab('book')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-lg transition text-sm">Book Group Session</button>
@@ -194,7 +193,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
-                            <!-- Changed to native calendar & time picker input -->
+                            <!-- Calendar and time picker -->
                             <input type="datetime-local" id="admin-datetime" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 [color-scheme:dark]">
                         </div>
                     </div>
@@ -253,7 +252,7 @@
         <p>&copy; 2026 TX Pierce Baseball Training (Sequential Baseball Training). All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript Application Logic with JSONbin Real-Time Sync & Agenda View -->
+    <!-- JavaScript Application Logic -->
     <script>
         const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
         const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
@@ -265,7 +264,7 @@
             { 
                 id: 3, 
                 type: "Youth Duo Hitting & Fielding (1.5HR) - $100/player", 
-                datetime: "Wed, Nov 4, 2026 | 4:00 PM - 5:30 PM", 
+                datetime: "Wed, Nov 4, 2026 | 3:30 PM", 
                 slotsNeeded: 4, 
                 players: ["", "", "", ""],
                 isYouthDuoGroup: true
@@ -273,7 +272,7 @@
             { id: 4, type: "1-on-1 Lesson (1HR) - $100", datetime: "Thu, Nov 5, 2026 | 4:30 PM", slotsNeeded: 1, players: [""] }
         ];
 
-        // Helper to format raw datetime-local string (e.g. "2026-11-02T16:00") into clean readable text ("Mon, Nov 2, 2026 | 4:00 PM")
+        // Format datetime-local input cleanly
         function formatDateTimeString(dateTimeStr) {
             if (!dateTimeStr || !dateTimeStr.includes('T')) return dateTimeStr;
             const dt = new Date(dateTimeStr);
@@ -364,8 +363,8 @@
                 slot.players.forEach((player, idx) => {
                     let posName = `Player ${idx + 1}`;
                     if (slot.isYouthDuoGroup) {
-                        if (idx === 0 || idx === 1) posName = `Player ${idx + 1} (1 Hour Hitting)`;
-                        if (idx === 2 || idx === 3) posName = `Player ${idx + 1} (1 Hour Hitting)`;
+                        if (idx === 0 || idx === 1) posName = `Player ${idx + 1} (Arrive at Start: 1hr Hitting + 30m Defense)`;
+                        if (idx === 2 || idx === 3) posName = `Player ${idx + 1} (Arrive +1 Hr: 30m Defense + 1hr Hitting)`;
                     } else if (slot.slotsNeeded === 2) {
                         posName = `Hitter ${idx + 1}`;
                     }
@@ -385,7 +384,7 @@
 
                 if (slot.isYouthDuoGroup) {
                     playerSlotsHtml += `<div class="mt-2 p-2 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center">
-                        <i class="fa-solid fa-circle-info mr-1"></i> All Players: 30 Mins Combined Defense
+                        <i class="fa-solid fa-circle-info mr-1"></i> All 4 Players: 30 Mins Combined Defense Together
                     </div>`;
                 }
 
@@ -424,7 +423,14 @@
                 card.className = "bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3";
 
                 let rosterList = filledPlayers.length > 0 
-                    ? filledPlayers.map((p, idx) => `<span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded text-xs text-slate-200"><i class="fa-solid fa-user text-blue-500 mr-1.5"></i> ${p}</span>`).join(' ')
+                    ? filledPlayers.map((p, idx) => {
+                        let arrivalNote = `P${idx+1}`;
+                        if (slot.isYouthDuoGroup) {
+                            if (idx === 0 || idx === 1) arrivalNote = `P${idx+1} (Arrive at Start)`;
+                            if (idx === 2 || idx === 3) arrivalNote = `P${idx+1} (Arrive +1 Hr)`;
+                        }
+                        return `<span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded text-xs text-slate-200"><i class="fa-solid fa-user text-blue-500 mr-1.5"></i> ${p} <span class="text-[10px] text-slate-400">(${arrivalNote})</span></span>`;
+                    }).join(' ')
                     : '<span class="text-xs text-slate-500 italic">No players booked yet (Open slots available)</span>';
 
                 card.innerHTML = `
@@ -438,7 +444,7 @@
                         </span>
                     </div>
                     <div class="space-y-1">
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Booked Roster:</p>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Booked Roster & Arrival Times:</p>
                         <div class="flex flex-wrap gap-2 pt-1">
                             ${rosterList}
                         </div>
@@ -590,7 +596,6 @@
             renderAdminBookings();
         }
 
-        // Fetch live schedule data on page load
         window.onload = function() {
             fetchSlots();
         };
