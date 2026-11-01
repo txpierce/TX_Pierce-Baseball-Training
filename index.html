@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TX Pierce Baseball Training | Sequential Baseball</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("NBBKHwkytX5n5eJJy");
+        })();
+    </script>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
 
@@ -23,7 +29,7 @@
                     <p class="text-xs text-slate-400">Coach Matt Pierce | Houston, TX</p>
                 </div>
             </div>
-            <nav class="flex flex-wrap justify-center gap-2 md:gap-3">
+            <nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3">
                 <button onclick="switchTab('home')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition shadow" id="btn-home">Home</button>
                 <button onclick="switchTab('book')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-book">Book a Session</button>
                 <button onclick="switchTab('calendar')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" id="btn-calendar"><i class="fa-solid fa-calendar-alt mr-1"></i> Calendar View</button>
@@ -39,9 +45,6 @@
 
         <!-- TAB 1: HOME & PRICING -->
         <section id="tab-home" class="space-y-8">
-            <!-- Coach Announcement Banner (Dynamically updated) -->
-            <div id="announcement-banner-container"></div>
-
             <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
                 <div class="max-w-2xl space-y-4">
                     <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30">Elite Sequencing & Development</span>
@@ -56,11 +59,14 @@
                 </div>
             </div>
 
+            <!-- Coach Announcement Banner -->
+            <div id="announcement-banner-container"></div>
+
             <!-- Today's Bookings Preview -->
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-6 space-y-4 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <h3 class="font-bold text-white text-base"><i class="fa-regular fa-calendar-days text-blue-500 mr-2"></i> Today's Training Sessions & Roster</h3>
-                    <span class="text-xs text-slate-400" id="current-date-display">Fri, Oct 30, 2026</span>
+                    <span class="text-xs text-slate-400" id="current-date-display">November 2026</span>
                 </div>
                 <div id="todays-roster-container" class="space-y-3">
                     <p class="text-xs text-slate-500">Loading today's sessions...</p>
@@ -126,7 +132,7 @@
         <section id="tab-book" class="hidden space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h3 class="text-2xl font-bold text-white">Available Training Slots</h3>
+                    <h3 class="text-2xl font-bold text-white" id="book-header-title">Available Training Slots</h3>
                     <p class="text-sm text-slate-400">Select an open slot or player position below to book your spot.</p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -180,7 +186,7 @@
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                     <div>
                         <h3 class="text-xl font-bold text-white">Coach Admin Dashboard</h3>
-                        <p class="text-xs text-slate-400">Manage schedule, announcements, and training slots.</p>
+                        <p class="text-xs text-slate-400">Manage schedule, announcements, practices, games, and camps.</p>
                     </div>
                     <span class="bg-blue-500/20 text-blue-400 text-xs px-2.5 py-1 rounded font-semibold">Admin Mode</span>
                 </div>
@@ -197,7 +203,7 @@
 
                 <!-- Add Slot Form -->
                 <form id="add-slot-form" onsubmit="addNewSlot(event)" class="space-y-4 bg-slate-900 p-4 rounded-lg border border-slate-800">
-                    <h4 class="font-bold text-sm text-white">Add New Training Slot</h4>
+                    <h4 class="font-bold text-sm text-white">Add New Training Slot, Practice, or Game</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Session Type</label>
@@ -211,16 +217,62 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
-                            <input type="text" id="admin-datetime" placeholder="e.g. Fri, Oct 30, 2026 | 5:00 PM" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <input type="datetime-local" id="admin-datetime" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
+                    </div>
+                    <div id="recurring-options-container" class="space-y-1">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Recurring Option (For Practices)</label>
+                        <select id="admin-recurring" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option value="none">One-time event</option>
+                            <option value="weekly-4">Weekly for 4 Weeks</option>
+                            <option value="weekly-8">Weekly for 8 Weeks</option>
+                            <option value="weekly-12">Weekly for 12 Weeks</option>
+                            <option value="weekday-daily">Weekday Daily (Mon-Fri)</option>
+                        </select>
                     </div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg text-sm transition shadow">Publish Slot to App</button>
                 </form>
 
+                <!-- Camp Builder Form -->
+                <form id="add-camp-form" onsubmit="addNewCamp(event)" class="space-y-4 bg-slate-900 p-4 rounded-lg border border-slate-800">
+                    <h4 class="font-bold text-sm text-white"><i class="fa-solid fa-campground text-amber-500 mr-2"></i> Add Camp or Clinic Flyer</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Camp Title</label>
+                            <input type="text" id="camp-title" placeholder="e.g. Winter Hitting Clinic" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Camp Date & Time</label>
+                            <input type="text" id="camp-date" placeholder="e.g. Sat, Nov 21, 2026 | 9:00 AM" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Google Drive Flyer Link</label>
+                            <input type="url" id="camp-flyer" placeholder="https://drive.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Google Form Registration Link</label>
+                            <input type="url" id="camp-form" placeholder="https://forms.gle/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Camp Description</label>
+                        <textarea id="camp-desc" rows="2" placeholder="Brief details about the camp..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-2 rounded-lg text-sm transition shadow">Publish Camp Flyer</button>
+                </form>
+
                 <!-- Active Bookings Overview -->
                 <div class="space-y-3">
-                    <h4 class="font-bold text-sm text-white">Manage Active Bookings</h4>
+                    <h4 class="font-bold text-sm text-white">Manage Active Bookings & Schedule</h4>
                     <div id="admin-bookings-list" class="space-y-2"></div>
+                </div>
+
+                <!-- Active Camps Overview -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-white">Manage Active Camps</h4>
+                    <div id="admin-camps-list" class="space-y-2"></div>
                 </div>
             </div>
         </section>
@@ -286,11 +338,12 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        const BIN_URL = "https://api.jsonbin.io/v3/b/6614a4f8ad19ca34f860f4e3";
-        const MASTER_KEY = "$2a$10$YourMasterKeyHere";
+        const BIN_URL = "https://api.jsonbin.io/v3/b/6ae48dc5ac6210605a5eb12c";
+        const MASTER_KEY = "$2a$10$KqVOg/LxrBXCa2B5..s75e9TF3O0kQ1k5kNpOeZPvaewH5x6dBOiu";
+        const ADMIN_PASSWORD = "coach123";
 
         let defaultSlots = [
-            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Fri, Oct 30, 2026 | 5:00 PM", slotsNeeded: 1, players: ["Matt Pierce (Age 17)"] },
+            { id: 1, type: "1-on-1 Lesson (1HR) - $100", datetime: "Mon, Nov 2, 2026 | 4:00 PM", slotsNeeded: 1, players: [""] },
             { id: 2, type: "2-on-1 Lesson (1HR) - $100", datetime: "Tue, Nov 3, 2026 | 5:00 PM", slotsNeeded: 2, players: ["", ""] },
             { 
                 id: 3, 
@@ -302,12 +355,17 @@
             }
         ];
 
+        let defaultCamps = [
+            { id: 1, title: "Winter Hitting Clinic", date: "Sat, Nov 21, 2026 | 9:00 AM", flyer: "#", form: "#", desc: "Intensive 3-hour hitting mechanics and exit velocity clinic." }
+        ];
+
         let slots = defaultSlots;
+        let camps = defaultCamps;
         let announcement = "";
-        let currentCalendarDate = new Date(2026, 10, 1); // November 2026
+        let currentCalendarDate = new Date(2026, 10, 1);
         let activeFilter = 'all';
 
-        async function fetchSlots(isBackground = false) {
+        async function fetchSlots(silent = false) {
             try {
                 const response = await fetch(BIN_URL + '/latest', {
                     headers: { 'X-Master-Key': MASTER_KEY }
@@ -315,35 +373,51 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.record) {
-                        if (data.record.slots) slots = data.record.slots;
+                        if (data.record.slots) {
+                            slots = data.record.slots;
+                            slots.forEach(s => {
+                                if (!s.players) s.players = new Array(s.slotsNeeded || 1).fill("");
+                            });
+                        }
+                        if (data.record.camps) camps = data.record.camps;
                         if (data.record.announcement !== undefined) announcement = data.record.announcement;
                     }
                 }
-            } catch (err) {
-                slots = JSON.parse(localStorage.getItem('tx_pierce_slots_v7')) || defaultSlots;
+            } catch (e) {
+                console.log('Using local fallback.');
+                if (!slots || slots.length === 0) slots = JSON.parse(localStorage.getItem('tx_pierce_slots_backup')) || defaultSlots;
+                if (!camps || camps.length === 0) camps = JSON.parse(localStorage.getItem('tx_pierce_camps_backup')) || defaultCamps;
                 announcement = localStorage.getItem('tx_pierce_announcement') || "";
             }
 
-            if (!isBackground) {
+            sortSlotsChronologically();
+
+            if (!silent) {
                 const spinner = document.getElementById('loading-spinner');
                 if (spinner) spinner.classList.add('hidden');
             }
             renderHome();
             renderSlots();
-            renderCalendar();
             renderAgenda();
+            renderCalendar();
+            renderCamps();
             if (!document.getElementById('tab-admin').classList.contains('hidden')) {
                 renderAdminBookings();
+                renderAdminCamps();
             }
         }
 
         async function saveSlots() {
-            localStorage.setItem('tx_pierce_slots_v7', JSON.stringify(slots));
+            sortSlotsChronologically();
+            localStorage.setItem('tx_pierce_slots_backup', JSON.stringify(slots));
+            localStorage.setItem('tx_pierce_camps_backup', JSON.stringify(camps));
             localStorage.setItem('tx_pierce_announcement', announcement);
+            
             renderHome();
             renderSlots();
-            renderCalendar();
             renderAgenda();
+            renderCalendar();
+            renderCamps();
 
             try {
                 await fetch(BIN_URL, {
@@ -352,17 +426,25 @@
                         'Content-Type': 'application/json',
                         'X-Master-Key': MASTER_KEY
                     },
-                    body: JSON.stringify({ slots: slots, announcement: announcement })
+                    body: JSON.stringify({ slots: slots, camps: camps, announcement: announcement })
                 });
             } catch (err) {
                 console.log('Cloud sync error.');
             }
         }
 
+        function sortSlotsChronologically() {
+            slots.sort((a, b) => {
+                const dateA = new Date(a.datetime.split('|')[0].trim());
+                const dateB = new Date(b.datetime.split('|')[0].trim());
+                return dateA - dateB;
+            });
+        }
+
         function switchTab(tabId) {
             if (tabId === 'admin') {
                 const pwd = prompt("Enter Admin Password:");
-                if (pwd !== "coach123") {
+                if (pwd !== ADMIN_PASSWORD) {
                     alert("Incorrect Password!");
                     return;
                 }
@@ -381,18 +463,22 @@
                 activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
             }
 
-            if (tabId === 'book' || tabId === 'calendar' || tabId === 'agenda' || tabId === 'admin') {
+            if (tabId === 'book' || tabId === 'admin' || tabId === 'agenda' || tabId === 'calendar') {
                 fetchSlots();
             }
         }
 
         function filterAndBook(type) {
             activeFilter = type;
+            if (type === 'lesson') {
+                document.getElementById('book-header-title').innerText = "Private Lessons ($100 / 1HR)";
+            } else if (type === 'group') {
+                document.getElementById('book-header-title').innerText = "Youth Group Training Sessions";
+            }
             switchTab('book');
         }
 
         function renderHome() {
-            // Announcement banner
             const bannerContainer = document.getElementById('announcement-banner-container');
             if (announcement) {
                 bannerContainer.innerHTML = `
@@ -408,9 +494,10 @@
                 bannerContainer.innerHTML = '';
             }
 
-            // Today's roster
             const rosterContainer = document.getElementById('todays-roster-container');
-            const todayStr = "Oct 30, 2026";
+            const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            document.getElementById('current-date-display').innerText = todayStr;
+
             const todaysSlots = slots.filter(s => s.datetime.includes(todayStr) && s.players.some(p => p !== ""));
 
             if (todaysSlots.length === 0) {
@@ -426,7 +513,7 @@
                 item.innerHTML = `
                     <div>
                         <strong class="text-white">${slot.type}</strong><br>
-                        <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime.split('|')[1]}</span>
+                        <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${slot.datetime.split('|')[1] || ''}</span>
                     </div>
                     <div class="text-right">
                         <span class="text-emerald-400 font-semibold">${playersBooked}</span>
@@ -441,11 +528,11 @@
             if (!container) return;
             container.innerHTML = '';
 
-            let filteredSlots = slots;
+            let filteredSlots = slots.filter(s => !s.isTeamEvent);
             if (activeFilter === 'lesson') {
-                filteredSlots = slots.filter(s => s.type.includes('1-on-1') || s.type.includes('2-on-1'));
+                filteredSlots = filteredSlots.filter(s => s.type.includes('1-on-1') || s.type.includes('2-on-1'));
             } else if (activeFilter === 'group') {
-                filteredSlots = slots.filter(s => s.type.includes('Youth Duo'));
+                filteredSlots = filteredSlots.filter(s => s.type.includes('Youth Duo'));
             }
 
             if (filteredSlots.length === 0) {
@@ -462,12 +549,12 @@
                 let playerSlotsHtml = '<div class="space-y-3 mt-3 pt-3 border-t border-slate-800/60 text-xs">';
                 
                 if (slot.isYouthDuoGroup) {
-                    playerSlotsHtml += `<div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 1: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
+                    playerSlotsHtml += `<div class="text-blue-400 font-bold uppercase tracking-wider text-[11px] pt-1 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Players 1 & 2: Arrive at Start Time (1hr Hitting + 30m Defense)</div>`;
                 }
 
                 slot.players.forEach((player, idx) => {
                     if (slot.isYouthDuoGroup && idx === 2) {
-                        playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Group 2: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
+                        playerSlotsHtml += `<div class="text-purple-400 font-bold uppercase tracking-wider text-[11px] pt-3 border-b border-slate-800/40 pb-1"><i class="fa-solid fa-clock mr-1"></i> Players 3 & 4: Arrive 1 Hr After Start (30m Defense + 1hr Hitting)</div>`;
                     }
 
                     let posName = `Player ${idx + 1}`;
@@ -488,6 +575,12 @@
                     }
                 });
 
+                if (slot.isYouthDuoGroup) {
+                    playerSlotsHtml += `<div class="mt-2 p-2.5 bg-blue-950/40 border border-blue-900/50 rounded text-[11px] text-blue-300 text-center font-medium">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Joint Team Defense (All 4 Players): 30 Mins Mid-Session
+                    </div>`;
+                }
+
                 playerSlotsHtml += '</div>';
 
                 card.innerHTML = `
@@ -504,7 +597,7 @@
                 `;
                 container.appendChild(card);
             });
-            activeFilter = 'all'; // reset filter after render
+            activeFilter = 'all';
         }
 
         function renderCalendar() {
@@ -521,33 +614,40 @@
 
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = 'bg-slate-950/40 border border-slate-800/40 rounded-xl h-32 opacity-30';
+                emptyCell.className = 'bg-slate-950/40 border border-slate-800/40 rounded-xl h-36 opacity-30';
                 grid.appendChild(emptyCell);
             }
 
             for (let day = 1; day <= totalDays; day++) {
                 const cell = document.createElement('div');
-                cell.className = 'bg-slate-950 border border-slate-800 rounded-xl p-2.5 h-36 flex flex-col justify-between overflow-y-auto';
+                cell.className = 'bg-slate-950 border border-slate-800 rounded-xl p-2.5 h-40 flex flex-col justify-between overflow-y-auto';
 
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'text-xs font-bold text-slate-400';
                 dayHeader.innerText = day;
                 cell.appendChild(dayHeader);
 
-                const matchingSlots = slots.filter(s => s.datetime.includes(`Nov ${day}, 2026`) || s.datetime.includes(` ${day},`));
+                const targetDateStr = `${currentCalendarDate.toLocaleString('default', { month: 'short' })} ${day}, ${year}`;
+                const matchingSlots = slots.filter(s => s.datetime.includes(targetDateStr));
+                const matchingCamps = camps.filter(c => c.date.includes(targetDateStr));
 
                 matchingSlots.forEach(slot => {
-                    const isFullyBooked = slot.players.every(p => p !== "");
+                    const isFullyBooked = slot.players && slot.players.every(p => p !== "");
                     const eventBadge = document.createElement('div');
-                    eventBadge.className = `p-1.5 rounded text-[10px] font-semibold text-white cursor-pointer transition ${isFullyBooked ? 'bg-rose-600/90 hover:bg-rose-500' : 'bg-blue-600 hover:bg-blue-500'}`;
                     
-                    const timeOnly = slot.datetime.split('|')[1] || slot.datetime;
-                    const bookedNames = slot.players.filter(p => p !== "").join(', ');
+                    let bgClass = isFullyBooked ? 'bg-rose-600/90 hover:bg-rose-500' : 'bg-blue-600 hover:bg-blue-500';
+                    if (slot.isTeamEvent) bgClass = 'bg-purple-600/90 hover:bg-purple-500';
 
-                    eventBadge.innerHTML = `<strong>${timeOnly.trim()}</strong><br>${slot.type.split(' - ')[0]}<br><span class="text-[9px] text-slate-200">${bookedNames || 'Open'}</span>`;
+                    eventBadge.className = `p-1.5 rounded text-[10px] font-semibold text-white cursor-pointer transition ${bgClass}`;
+                    
+                    const timeOnly = slot.datetime.includes('|') ? slot.datetime.split('|')[1] : slot.datetime;
+                    const bookedNames = slot.players ? slot.players.filter(p => p !== "").join(', ') : '';
+
+                    eventBadge.innerHTML = `<strong>${timeOnly.trim()}</strong><br>${slot.type}<br><span class="text-[9px] text-slate-200">${bookedNames || 'Open'}</span>`;
                     
                     eventBadge.onclick = () => {
-                        const openIdx = slot.players.findIndex(p => p === "");
+                        if (slot.isTeamEvent) return;
+                        const openIdx = slot.players ? slot.players.findIndex(p => p === "") : -1;
                         if (openIdx !== -1) {
                             openBookingModal(slot.id, openIdx);
                         } else {
@@ -556,6 +656,14 @@
                     };
 
                     cell.appendChild(eventBadge);
+                });
+
+                matchingCamps.forEach(camp => {
+                    const campBadge = document.createElement('div');
+                    campBadge.className = 'p-1.5 rounded text-[10px] font-semibold text-white bg-amber-600 hover:bg-amber-500 cursor-pointer transition';
+                    campBadge.innerHTML = `<strong>Camp</strong><br>${camp.title}`;
+                    campBadge.onclick = () => switchTab('camps');
+                    cell.appendChild(campBadge);
                 });
 
                 grid.appendChild(cell);
@@ -572,10 +680,10 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const activeSlots = slots.filter(s => s.players.some(p => p !== ""));
+            const activeSlots = slots.filter(s => s.isTeamEvent || (s.players && s.players.some(p => p !== "")));
 
-            if (activeSlots.length === 0) {
-                container.innerHTML = '<div class="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center text-slate-500 text-sm">No booked training sessions currently.</div>';
+            if (activeSlots.length === 0 && camps.length === 0) {
+                container.innerHTML = '<div class="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center text-slate-500 text-sm">No booked training sessions or events currently.</div>';
                 return;
             }
 
@@ -583,15 +691,72 @@
                 const card = document.createElement('div');
                 card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3 shadow-lg';
                 
-                let lineups = slot.players.map((p, i) => p ? `<div class="text-xs text-slate-300 bg-slate-900 p-2 rounded border border-slate-800"><strong>P${i+1}:</strong> ${p}</div>` : '').join('');
+                if (slot.isTeamEvent) {
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <div>
+                                <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]">Team Event</span>
+                                <h4 class="font-bold text-white text-base">${slot.type}</h4>
+                            </div>
+                            <span class="text-xs text-blue-400 font-semibold"><i class="fa-regular fa-calendar mr-1"></i> ${slot.datetime}</span>
+                        </div>
+                    `;
+                } else {
+                    let lineups = slot.players.map((p, i) => p ? `<div class="text-xs text-slate-300 bg-slate-900 p-2 rounded border border-slate-800"><strong>P${i+1}:</strong> ${p}</div>` : '').join('');
 
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <h4 class="font-bold text-white text-base">${slot.type}</h4>
+                            <span class="text-xs text-blue-400 font-semibold"><i class="fa-regular fa-calendar mr-1"></i> ${slot.datetime}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            ${lineups}
+                        </div>
+                    `;
+                }
+                container.appendChild(card);
+            });
+
+            camps.forEach(camp => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-950 border border-amber-900/50 rounded-xl p-5 space-y-2 shadow-lg';
                 card.innerHTML = `
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <h4 class="font-bold text-white text-base">${slot.type}</h4>
-                        <span class="text-xs text-blue-400 font-semibold"><i class="fa-regular fa-calendar mr-1"></i> ${slot.datetime}</span>
+                        <div>
+                            <span class="text-amber-400 font-bold uppercase tracking-wider text-[10px]">Camp / Clinic</span>
+                            <h4 class="font-bold text-white text-base">${camp.title}</h4>
+                        </div>
+                        <span class="text-xs text-amber-400 font-semibold"><i class="fa-regular fa-calendar mr-1"></i> ${camp.date}</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        ${lineups}
+                    <p class="text-xs text-slate-300">${camp.desc}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderCamps() {
+            const container = document.getElementById('camps-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (camps.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 col-span-2 text-center py-8">No camps scheduled at this time.</p>';
+                return;
+            }
+
+            camps.forEach(camp => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-6 flex flex-col justify-between space-y-4 shadow-xl';
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs font-bold px-2.5 py-1 rounded">UPCOMING CAMP</span>
+                        <h4 class="text-xl font-bold text-white">${camp.title}</h4>
+                        <p class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${camp.date}</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">${camp.desc}</p>
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        ${camp.flyer && camp.flyer !== '#' ? `<a href="${camp.flyer}" target="_blank" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-center py-2.5 rounded-lg text-xs font-semibold transition">View Flyer</a>` : ''}
+                        ${camp.form && camp.form !== '#' ? `<a href="${camp.form}" target="_blank" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-center py-2.5 rounded-lg text-xs font-semibold transition shadow">Register Now</a>` : ''}
                     </div>
                 `;
                 container.appendChild(card);
@@ -679,30 +844,93 @@
         async function addNewSlot(event) {
             event.preventDefault();
             const type = document.getElementById('admin-type').value;
-            const datetime = document.getElementById('admin-datetime').value.trim();
+            const rawDatetime = document.getElementById('admin-datetime').value;
+            const recurringType = document.getElementById('admin-recurring').value;
+
+            if (!rawDatetime) {
+                alert("Please select a date and time.");
+                return;
+            }
+
+            const formattedDate = formatDatetimeString(rawDatetime);
             let slotsNeeded = 1;
             let isYouthDuoGroup = false;
+            let isTeamEvent = false;
 
             if (type.includes("2-on-1 Lesson")) slotsNeeded = 2;
             if (type.includes("Youth Duo")) {
                 slotsNeeded = 4;
                 isYouthDuoGroup = true;
             }
+            if (type === "Team Practice" || type === "Team Game") {
+                isTeamEvent = true;
+            }
 
-            const newSlot = {
-                id: Date.now(),
-                type: type,
-                datetime: datetime,
-                slotsNeeded: slotsNeeded,
-                players: new Array(slotsNeeded).fill(""),
-                isYouthDuoGroup: isYouthDuoGroup
-            };
+            const baseDate = new Date(rawDatetime);
+            let occurrences = 1;
+            let intervalDays = 7;
 
-            slots.push(newSlot);
+            if (recurringType === 'weekly-4') occurrences = 4;
+            else if (recurringType === 'weekly-8') occurrences = 8;
+            else if (recurringType === 'weekly-12') occurrences = 12;
+            else if (recurringType === 'weekday-daily') {
+                occurrences = 5;
+                intervalDays = 1;
+            }
+
+            for (let i = 0; i < occurrences; i++) {
+                const eventDate = new Date(baseDate);
+                eventDate.setDate(baseDate.getDate() + (i * intervalDays));
+
+                slots.push({
+                    id: Date.now() + i,
+                    type: type,
+                    datetime: formatDatetimeString(eventDate.toISOString().slice(0, 16)),
+                    slotsNeeded: slotsNeeded,
+                    players: new Array(slotsNeeded).fill(""),
+                    isYouthDuoGroup: isYouthDuoGroup,
+                    isTeamEvent: isTeamEvent
+                });
+            }
+
             await saveSlots();
             document.getElementById('admin-datetime').value = '';
-            alert('New training slot successfully published!');
+            alert('Training slot(s) successfully published live across all devices!');
             renderAdminBookings();
+        }
+
+        async function addNewCamp(event) {
+            event.preventDefault();
+            const title = document.getElementById('camp-title').value.trim();
+            const date = document.getElementById('camp-date').value.trim();
+            const flyer = document.getElementById('camp-flyer').value.trim();
+            const form = document.getElementById('camp-form').value.trim();
+            const desc = document.getElementById('camp-desc').value.trim();
+
+            camps.push({
+                id: Date.now(),
+                title,
+                date,
+                flyer,
+                form,
+                desc
+            });
+
+            await saveSlots();
+            document.getElementById('camp-title').value = '';
+            document.getElementById('camp-date').value = '';
+            document.getElementById('camp-flyer').value = '';
+            document.getElementById('camp-form').value = '';
+            document.getElementById('camp-desc').value = '';
+            alert('Camp flyer successfully published!');
+            renderAdminCamps();
+        }
+
+        function formatDatetimeString(isoStr) {
+            const d = new Date(isoStr);
+            const optionsDate = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true };
+            return `${d.toLocaleDateString('en-US', optionsDate)} | ${d.toLocaleTimeString('en-US', optionsTime)}`;
         }
 
         function renderAdminBookings() {
@@ -718,21 +946,56 @@
             }
 
             slots.forEach(slot => {
-                const filledCount = slot.players.filter(p => p !== "").length;
                 const item = document.createElement('div');
                 item.className = 'bg-slate-900 border border-slate-800 p-3 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs shadow';
                 
-                let playerSummary = slot.players.map((p, i) => `P${i+1}: ${p || 'Open'}`).join(' | ');
+                if (slot.isTeamEvent) {
+                    item.innerHTML = `
+                        <div>
+                            <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]">Team Event</span><br>
+                            <strong class="text-white">${slot.datetime}</strong> (${slot.type})
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete</button>
+                        </div>
+                    `;
+                } else {
+                    const filledCount = slot.players.filter(p => p !== "").length;
+                    let playerSummary = slot.players.map((p, i) => `P${i+1}: ${p || 'Open'}`).join(' | ');
 
+                    item.innerHTML = `
+                        <div>
+                            <strong class="text-white">${slot.datetime}</strong> (${slot.type})<br>
+                            <span class="text-slate-300">Slots Filled: ${filledCount}/${slot.slotsNeeded} [ ${playerSummary} ]</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="resetSlot(${slot.id})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1 rounded transition">Reset Slots</button>
+                            <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete</button>
+                        </div>
+                    `;
+                }
+                list.appendChild(item);
+            });
+        }
+
+        function renderAdminCamps() {
+            const list = document.getElementById('admin-camps-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            if (camps.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-500">No camps created yet.</p>';
+                return;
+            }
+
+            camps.forEach(camp => {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-900 border border-slate-800 p-3 rounded-lg flex justify-between items-center text-xs shadow';
                 item.innerHTML = `
                     <div>
-                        <strong class="text-white">${slot.datetime}</strong> (${slot.type})<br>
-                        <span class="text-slate-300">Slots Filled: ${filledCount}/${slot.slotsNeeded} [ ${playerSummary} ]</span>
+                        <strong class="text-white">${camp.title}</strong> (${camp.date})
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="resetSlot(${slot.id})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1 rounded transition">Reset Slots</button>
-                        <button onclick="deleteSlot(${slot.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete</button>
-                    </div>
+                    <button onclick="deleteCamp(${camp.id})" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-2.5 py-1 rounded transition">Delete</button>
                 `;
                 list.appendChild(item);
             });
@@ -741,7 +1004,7 @@
         async function resetSlot(id) {
             const slot = slots.find(s => s.id === id);
             if (slot) {
-                slot.players = new Array(slot.slotsNeeded).fill("");
+                slot.players = new Array(slot.slotsNeeded || 1).fill("");
                 await saveSlots();
                 renderAdminBookings();
             }
@@ -751,6 +1014,12 @@
             slots = slots.filter(s => s.id !== id);
             await saveSlots();
             renderAdminBookings();
+        }
+
+        async function deleteCamp(id) {
+            camps = camps.filter(c => c.id !== id);
+            await saveSlots();
+            renderAdminCamps();
         }
 
         window.onload = function() {
