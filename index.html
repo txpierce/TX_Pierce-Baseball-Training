@@ -401,8 +401,7 @@
         // ===== BACKEND ADAPTER (the ONLY place that talks to storage) =====
         // Google Sheet storage: paste the web app URL from apps-script/Code.gs below
         // (see HOW-TO-SET-UP-GOOGLE-SHEET.md). Until then the site runs device-only.
-        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvhPpXROaAVRIXVngpUPRK8ARFIvBqWpTHo3x6PFsAksurKr2IvgVx-nFksnw9IZz5lw/exec
-";
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvhPpXROaAVRIXVngpUPRK8ARFIvBqWpTHo3x6PFsAksurKr2IvgVx-nFksnw9IZz5lw/exec";
         let dataVersion = null; // version of the data this page last loaded; sent with admin saves
         const Backend = {
             configured: /^https?:\/\//i.test(BACKEND_URL),
@@ -1333,14 +1332,14 @@
 
             if (isTeamEvent && recurrenceMode !== "none") {
                 if (recurrenceMode.startsWith("weekly_")) {
-                    const weeks = parseInt(recurrenceMode.split("_")[8]);
+                    const weeks = parseInt(recurrenceMode.split("_")[1]);
                     for (let i = 0; i < weeks; i++) {
                         let d = new Date(baseDate);
                         d.setDate(d.getDate() + (i * 7));
                         eventDates.push(d);
                     }
                 } else if (recurrenceMode.startsWith("weekday_")) {
-                    const weeks = parseInt(recurrenceMode.split("_")[8]);
+                    const weeks = parseInt(recurrenceMode.split("_")[1]);
                     const totalDays = weeks * 5;
                     let currentDate = new Date(baseDate);
                     
